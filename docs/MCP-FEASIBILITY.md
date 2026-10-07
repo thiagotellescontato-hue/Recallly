@@ -8,7 +8,7 @@ O [guia atual de servidor MCP próprio](https://developers.openai.com/api/docs/g
 
 O procedimento atual não exige explicitamente ativar Developer Mode. Não foi comprovada a disponibilidade desse controle ou do recurso na conta de Thiago; não se assume acesso pelo plano ou pela presença de outros plugins. A opção ausente precisa ser resolvida nas permissões da conta/workspace.
 
-O [Secure MCP Tunnel](https://developers.openai.com/api/docs/guides/secure-mcp-tunnels) alcança MCP privado por stdio ou HTTP, usando conexão HTTPS de saída. Exige tunnel_id, chave de runtime, permissões Tunnels e associação ao workspace correto. Um token isolado não cria essa associação nem instala o plugin. A prova usa stdio; nenhuma porta é publicada. O túnel não atende submissão pública de plugins, que exige HTTPS público estável. Nenhum túnel foi criado ou executado nesta etapa.
+O [Secure MCP Tunnel](https://developers.openai.com/api/docs/guides/secure-mcp-tunnels) alcança MCP privado por stdio ou HTTP, usando conexão HTTPS de saída. Exige tunnel_id, chave de runtime, permissões Tunnels e associação ao workspace correto. Um token isolado não cria essa associação nem instala o plugin. A prova usa stdio; nenhuma porta é publicada. O túnel não atende submissão pública de plugins, que exige HTTPS público estável.
 
 ## Autenticação
 
@@ -18,7 +18,9 @@ O [guia de autenticação](https://developers.openai.com/plugins/build/auth) des
 
 ## Evidência e limitações
 
-Comprovado: inicialização MCP, descoberta da ferramenta única, chamadas válidas, schema de saída, erro controlado e encerramento local, conforme [VALIDATION](VALIDATION.md). Não comprovado: permissões de conta, túnel operacional, descoberta pelo ChatGPT, instalação ou seleção do plugin neste chat.
+Comprovado: inicialização MCP, descoberta da ferramenta única, chamadas válidas, schema de saída, erro controlado e encerramento local, conforme [VALIDATION](VALIDATION.md). Na segunda etapa, a Platform autenticada permitiu criar o túnel Recallly Probe e confirmar sua associação à organização e ao workspace disponível. Cliente oficial Windows e perfil stdio preparados. `doctor` carrega o perfil e identifica a ausência de `CONTROL_PLANE_API_KEY`; não foi possível comprovar runtime saudável ou pronto sem a chave.
+
+Não comprovado: permissões efetivas da futura chave de runtime, túnel operacional, resposta MCP remota, descoberta pelo ChatGPT, instalação ou seleção do plugin neste chat. A criação do registro de túnel, isoladamente, não comprova conexão.
 
 O [guia de teste de plugins](https://developers.openai.com/plugins/deploy/connect-chatgpt) recomenda instalar o plugin, abrir nova conversa, selecionar com `@` e verificar a chamada real. Só esse teste permite declarar conexão com o ChatGPT. Computador e cliente precisam permanecer disponíveis; desligamento, suspensão, rede bloqueada, associação incorreta, ferramenta desabilitada e políticas de workspace podem impedir comandos.
 

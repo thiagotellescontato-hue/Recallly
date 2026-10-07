@@ -35,3 +35,17 @@ Resultado real da chamada local:
 Falhas iniciais do ambiente foram resolvidas: helper HTTPS do Git localizado por GIT_EXEC_PATH; clone com rede fora do sandbox; teste executado fora do sandbox após spawn EPERM. Nenhum erro de implementação foi encontrado nos testes finais.
 
 O servidor não cria listener nem acessa filesystem, rede ou APIs externas em seu código. Nenhum túnel foi ativado. **Não houve chamada da ferramenta por um plugin instalado neste chat ou no ChatGPT.** Não há evidência de conexão ponta a ponta; os passos manuais estão em PROBE-SETUP.md.
+
+## Segunda etapa em 07/10/2026
+
+`pnpm check` e `pnpm test` passaram novamente após a publicação. Chamada local retornou `online`, versão `0.1.0`, horário `2026-10-07T23:34:30.859Z`, fuso `America/Sao_Paulo` e UUID anônimo. Erros controlados, recuperação e encerramento do servidor passaram. Revisão dos arquivos versionados e busca por padrões de tokens, chaves privadas e certificados não encontraram credenciais; essa busca não é uma garantia genérica de ausência de todo tipo de segredo.
+
+Publicação confirmada por `git ls-remote origin refs/heads/main`: `d1cd0e5c429a1c826993d7adc533c756697a4caa`. [Commit original publicado](https://github.com/thiagotellescontato-hue/Recallly/commit/d1cd0e5c429a1c826993d7adc533c756697a4caa).
+
+Na Platform, criação e associação do túnel confirmadas pela interface e pela reabertura do formulário de edição. Identificador: `tunnel_6ac6d763b35c8191bd9e8ae6ece0b62e`. Esse identificador não é uma credencial.
+
+Cliente oficial Windows x64 0.0.16: checksum confirmado, execução de version/help, init e doctor. Primeira tentativa de init falhou porque o parser removeu barras invertidas do comando Windows; init com caminhos em `/` passou. Perfil externo e comando stdio corretos confirmados. `doctor` concluiu com `RESULT fail`, `FAILED_CHECKS control_plane_api_key`, `EXIT_CODE 2`, pois a variável de ambiente da chave não existe. A menção a plugin Codex opcional é SKIP, não motivo desse erro.
+
+Um iniciador PowerShell externo ao checkout foi preparado, com parsing sintático sem erros. Ele recebe a chave com Read-Host -AsSecureString, usa apenas variável de ambiente, executa doctor, inicia run somente após diagnóstico aprovado e restaura o ambiente ao terminar. Não foi executado com chave nesta etapa.
+
+Estado de prontidão: servidor MCP de teste encerrado; túnel cadastrado, mas daemon ainda não iniciado. Sem evidência de health/ready, MCP remoto ou chamada pelo chat. Não há porta pública ou encaminhamento de roteador.

@@ -11,4 +11,14 @@
 - Teste local não comprova conexão deste chat. Configuração da conta, túnel e chamada real pelo plugin permanecem pendentes de ação manual.
 - Repositório inicial vazio; publicação solicitada diretamente em main, sem force push.
 
+## Continuação: publicação e preparação do túnel
+
+- O commit original foi preservado e publicado sem alteração: `d1cd0e5c429a1c826993d7adc533c756697a4caa`. A autenticação foi feita pelo Git Credential Manager, via dispositivo, e o remoto confirmou o SHA em main.
+- Túnel Recallly Probe criado na Platform, associado à organização e ao workspace disponível. Identificadores de organização/workspace ficam no perfil administrativo da Platform; não são necessários no código.
+- Cliente oficial Windows x64 0.0.16 baixado e verificado fora do checkout. Perfil também externo, sem chave embutida e com listener de saúde apenas em loopback.
+- O preflight do cliente descartou barras invertidas do comando Windows. Caminhos com `/`, mantendo aspas para espaços, passaram no init. As instruções foram corrigidas com essa evidência real.
+- Formulário de chave de runtime preparado com somente Tunnels Read + Use e validade de um dia. A criação final e a entrada protegida da chave ficam com Thiago; nenhuma chave foi capturada ou gravada pelo agente.
+- Não instalar o plugin opcional Tunnel MCP do Codex: ele não é necessário para a ferramenta de diagnóstico no ChatGPT. Não usar MCP stub ou Harpoon, pois acrescentariam ferramentas fora do escopo.
+- Sem chave disponível no ambiente, não iniciar um daemon incapaz de autenticar nem apresentar o registro do túnel como runtime pronto. Ativação e teste real pelo chat permanecem pendentes.
+
 Fora do escopo: persistência de lembretes, agendador, SMTP, credenciais de e-mail, autostart Windows, interface final e distribuição pública.
