@@ -30,3 +30,5 @@ Perfil local criado em `work/secure-mcp/profiles`, fora do checkout, com referê
 Repositório oficial clonado via HTTPS: `https://github.com/thiagotellescontato-hue/Recallly.git`. Estado inicial vazio, sem commits; branch ativa `main`; remoto `origin` para essa URL, tanto fetch quanto push. A mensagem origin/main [gone] indicava ausência de commits remotos, não uma branch perdida com conteúdo. Nenhum AGENTS.md encontrado no checkout ou nos ancestrais aplicáveis.
 
 O Git empacotado exigiu corrigir GIT_EXEC_PATH para localizar o helper HTTPS. Rede e subprocessos foram permitidos por execução escalada: tentativa inicial de clone falhou no proxy do sandbox e teste inicial falhou com spawn EPERM. Não foi necessário alterar o sistema.
+
+O terminal interativo Windows PowerShell bloqueou scripts .ps1 por política de execução. O túnel foi iniciado por comandos diretos no console, sem alterar essa política. Cliente oficial ativo; healthz/readyz retornaram HTTP 200. Nenhuma credencial foi gravada no checkout.

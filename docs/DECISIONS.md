@@ -22,3 +22,10 @@
 - Sem chave disponível no ambiente, não iniciar um daemon incapaz de autenticar nem apresentar o registro do túnel como runtime pronto. Ativação e teste real pelo chat permanecem pendentes.
 
 Fora do escopo: persistência de lembretes, agendador, SMTP, credenciais de e-mail, autostart Windows, interface final e distribuição pública.
+
+## Ativação e instalação
+
+- Thiago criou a chave e inseriu o segredo em Read-Host protegido. Nenhuma chave foi lida ou gravada pelo agente.
+- Windows PowerShell bloqueou execução do iniciador .ps1. Comandos diretos no console resolveram, sem mudar política de execução.
+- Doctor RESULT ok e healthz/readyz HTTP 200 confirmados. Túnel mantido ativo no terminal do usuário para teste pelo ChatGPT.
+- Plugin privado Recallly Probe criado e instalado no ChatGPT web, usando conexão Túnel e sem autenticação de aplicação. Interface confirma Conectado. Chamada real pelo chat ainda pendente.

@@ -49,3 +49,11 @@ Cliente oficial Windows x64 0.0.16: checksum confirmado, execução de version/h
 Um iniciador PowerShell externo ao checkout foi preparado, com parsing sintático sem erros. Ele recebe a chave com Read-Host -AsSecureString, usa apenas variável de ambiente, executa doctor, inicia run somente após diagnóstico aprovado e restaura o ambiente ao terminar. Não foi executado com chave nesta etapa.
 
 Estado de prontidão: servidor MCP de teste encerrado; túnel cadastrado, mas daemon ainda não iniciado. Sem evidência de health/ready, MCP remoto ou chamada pelo chat. Não há porta pública ou encaminhamento de roteador.
+
+## Ativação efetiva
+
+Após entrada protegida da chave pelo usuário, doctor retornou RESULT ok. O comando run está ativo no terminal do usuário. Listener verificado exclusivamente em 127.0.0.1; healthz e readyz responderam HTTP 200. Plugin privado Recallly Probe criado e instalado pelo fluxo Túnel no ChatGPT web; interface mostra Conectado, autorização Nenhuma e status DEVELOPMENT.
+
+Esses resultados substituem o estado anterior sem chave/daemon. Ainda não houve chamada real de recallly_status pelo chat. A ferramenta não aparece entre as ferramentas disponíveis desta sessão Codex. O túnel permanece ativo para o teste manual.
+
+Verificação final repetida: pnpm check e pnpm test exit 0; chamada local online às 2026-10-07T23:52:15.015Z, fuso America/Sao_Paulo. Chamada inválida, ferramenta desconhecida, recuperação e encerramento passaram. A interface instalada não exibiu nesta verificação a lista ou resultado de tools/call remoto; não se apresenta essa evidência como comprovada.

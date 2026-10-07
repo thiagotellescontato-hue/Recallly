@@ -22,20 +22,27 @@ O servidor espera mensagens MCP no stdin; silêncio no terminal é esperado. Par
 
 ## Conectar ao ChatGPT sem publicar porta
 
-Preparação já concluída: túnel Recallly Probe criado e associação à organização e ao workspace disponível conferida. Identificador não secreto: `tunnel_6ac6d763b35c8191bd9e8ae6ece0b62e`. Cliente oficial Windows x64 0.0.16 baixado e checksum validado. Perfil stdio gerado e preflight do executável aprovado. A chave de runtime ainda não está no ambiente; doctor falha nesse requisito e o túnel não foi iniciado.
+Preparação já concluída: túnel Recallly Probe criado e associação à organização e ao workspace disponível conferida. Identificador não secreto: `tunnel_6ac6d763b35c8191bd9e8ae6ece0b62e`. Cliente oficial Windows x64 0.0.16 baixado e checksum validado. Perfil stdio gerado e preflight do executável aprovado. Thiago criou e inseriu a chave em campo protegido. Doctor aprovado, run ativo e health/ready HTTP 200. Plugin privado instalado e conectado no ChatGPT web.
 
 Na pasta desta conversa, o cliente fica em `work/tools/secure-mcp/v0.0.16` e o perfil em `work/secure-mcp/profiles`; ambos fora do checkout `work/Recallly`. Nenhum PATH global foi alterado. O arquivo externo `outputs/Start-RecalllyTunnel.ps1` recebe a chave com entrada protegida, faz doctor e só então inicia run, com health em loopback e sem gravar a chave.
 
-### Ação manual indispensável no computador preparado
+### Iniciar no computador preparado
 
-1. Na aba [API keys da Platform](https://platform.openai.com/settings/organization/api-keys), conclua a criação da chave de runtime: nome Recallly Probe runtime, Default project, Restricted, somente Tunnels Read + Use, validade de um dia. O formulário foi preparado; a criação final não foi executada pelo agente. Não crie uma chave de administrador nem envie o segredo no chat.
-2. No terminal PowerShell da pasta desta conversa, execute:
+A chave foi criada pelo usuário com Tunnels Read + Use e validade de um dia. O terminal Windows PowerShell bloqueou o arquivo .ps1 por política de execução. Use os comandos diretamente no console; nenhuma política foi alterada ou contornada. Na pasta desta conversa:
 
 ```powershell
-.\outputs\Start-RecalllyTunnel.ps1
+$probeSecret = Read-Host 'Chave de runtime do túnel' -AsSecureString
+$env:CONTROL_PLANE_API_KEY = [System.Net.NetworkCredential]::new('', $probeSecret).Password
+& '.\work\tools\secure-mcp\v0.0.16\tunnel-client.exe' doctor --profile recallly-probe --profile-dir '.\work\secure-mcp\profiles' --explain
 ```
 
-3. Insira a chave somente no campo protegido. Se doctor falhar, não considere o túnel ativo: resolva a mensagem de permissão/configuração exibida. Mantenha o terminal aberto. A existência do arquivo `work/secure-mcp/health.url` indica apenas que o listener começou; confirme HTTP 200 em `/healthz` e `/readyz` antes do teste remoto.
+Somente após RESULT ok, execute:
+
+```powershell
+& '.\work\tools\secure-mcp\v0.0.16\tunnel-client.exe' run --profile recallly-probe --profile-dir '.\work\secure-mcp\profiles' --health.url-file '.\work\secure-mcp\health.url' --log.level warn --mcp.stdio-send-initialized-notification
+```
+
+Mantenha o terminal aberto para o teste pelo ChatGPT. Insira o segredo apenas no campo protegido, nunca na linha de comando ou no chat. A existência de health.url sozinha não comprova prontidão; nesta execução healthz e readyz retornaram HTTP 200.
 
 ### Configuração reproduzível pelo cliente oficial
 
@@ -63,9 +70,11 @@ try {
 }
 ```
 
-O parser do cliente 0.0.16 removeu barras invertidas da string de comando no primeiro teste; barras `/` e aspas passaram no init real. O cliente inicia o servidor stdio; não inicie uma segunda cópia manualmente. Sem chave fornecida, a autenticação remota e run ainda não foram testados. Não ative MCP stub, Harpoon, plugin opcional de gestão do Codex, logs HTTP brutos ou acesso remoto à interface de saúde.
+O parser do cliente 0.0.16 removeu barras invertidas da string de comando no primeiro teste; barras `/` e aspas passaram no init real. O cliente inicia o servidor stdio; não inicie uma segunda cópia manualmente. Nesta máquina, autenticação de runtime, doctor e run já foram testados com sucesso. Não ative MCP stub, Harpoon, plugin opcional de gestão do Codex, logs HTTP brutos ou acesso remoto à interface de saúde.
 
-### Instalar e testar o plugin, depois de o túnel ficar pronto
+### Testar o plugin instalado
+
+O plugin já está instalado: [Recallly Probe](https://chatgpt.com/plugins/plugin_asdk_app_6ac6dabb9f9c81919665052bb521dfa9). Mantenha o terminal aberto, clique em Testar no chat e confira a seleção do plugin antes de enviar o texto abaixo. Os passos seguintes documentam a instalação para outra sessão, sem necessidade de recriar o plugin atual.
 
 1. No ChatGPT web, no workspace associado, abra Plugins → `+` → Add custom MCP server. Nome: Recallly Probe. Connection: Tunnel; selecione ou informe `tunnel_6ac6d763b35c8191bd9e8ae6ece0b62e`. Authentication: No authentication. Revise o aviso exibido e crie o plugin.
 2. Confirme que a descoberta mostra somente `recallly_status`. Instale-o, abra uma conversa, selecione-o com `@` e envie exatamente: `Use Recallly Probe e chame recallly_status sem argumentos. Não use o terminal nem outras ferramentas para simular essa chamada.`
@@ -80,4 +89,4 @@ Remove-Item Env:CONTROL_PLANE_API_KEY -ErrorAction SilentlyContinue
 $probeSecret = $null
 ```
 
-Não use exposição direta de porta, encaminhamento no roteador ou túnel de terceiros. Não grave perfis, certificados ou segredos no Git. A preparação já criou o túnel e o perfil externo; não houve instalação do plugin no ChatGPT/Codex nem ativação de daemon. Só uma chamada MCP real pelo chat comprova a integração.
+Não use exposição direta de porta, encaminhamento no roteador ou túnel de terceiros. Não grave perfis, certificados ou segredos no Git. O túnel está ativo e o plugin Recallly Probe foi instalado e conectado no ChatGPT web. Não houve registro da ferramenta nesta sessão Codex. Só uma chamada MCP real pelo chat comprova a integração.
