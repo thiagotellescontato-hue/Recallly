@@ -1,0 +1,19 @@
+[package]
+name = "recallly-rust"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+rmcp = { version = "=3.5.1", default-features = false, features = ["server", "transport-io"] }
+tokio = { version = "1", features = ["rt", "io-std", "macros"] }
+serde_json = "1"
+uuid = { version = "1", features = ["v4"] }
+chrono = { version = "0.4", default-features = false, features = ["clock"] }
+
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"

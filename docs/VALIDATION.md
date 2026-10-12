@@ -1,5 +1,11 @@
 # Validação realizada
 
+## Atualização em 12/10/2026
+
+Integração real comprovada nesta conversa por invocação direta do plugin Recallly Probe. As quatro provas comparativas passaram cinco ciclos MCP locais e chamadas reais pelo mesmo túnel. Depois das medições o servidor Node original foi restaurado: readyz HTTP 200 e recallly_status online, versão 0.1.0, horário 2026-10-12T15:33:39.900Z e fuso America/Sao_Paulo. Sem armazenamento do UUID de sessão nos resultados comparativos. Dois timeouts iniciais nas trocas Go e Node foram seguidos de sucesso; causa não determinada.
+
+pnpm check e pnpm test repetidos na revisão final, incluindo argumentos inválidos, ferramenta desconhecida, recuperação e encerramento do subprocesso de teste. Resultados e método das quatro tecnologias em PERFORMANCE.md. Os registros abaixo preservam o histórico anterior, quando a chamada pelo chat ainda não havia sido comprovada.
+
 Em 07/10/2026, Node.js 24.19.0 no Windows x64:
 
 ```text

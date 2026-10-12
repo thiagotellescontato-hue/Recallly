@@ -29,3 +29,26 @@ Fora do escopo: persistência de lembretes, agendador, SMTP, credenciais de e-ma
 - Windows PowerShell bloqueou execução do iniciador .ps1. Comandos diretos no console resolveram, sem mudar política de execução.
 - Doctor RESULT ok e healthz/readyz HTTP 200 confirmados. Túnel mantido ativo no terminal do usuário para teste pelo ChatGPT.
 - Plugin privado Recallly Probe criado e instalado no ChatGPT web, usando conexão Túnel e sem autenticação de aplicação. Interface confirma Conectado. Chamada real pelo chat ainda pendente.
+
+## Comparação de arquitetura em 10/10/2026 — em andamento
+
+- Construir provas equivalentes Go, .NET e Rust, mantendo Node e plugin originais. Nenhuma funcionalidade do aplicativo futuro foi implementada.
+- Comparar cinco inicializações e 15 amostras de repouso por candidato, separando servidor, túnel, auxiliares e total. Não misturar resultados diagnósticos coletados durante compilações com a rodada final.
+- Usar SDKs oficiais, todos atualmente Tier 1. Compiladores e artefatos ficam fora do checkout; versionar somente fontes, lockfiles, método e métricas sem identificadores pessoais.
+- .NET self-contained com trimming compilou. Native AOT não foi medido por bloqueio da instalação do linker Microsoft; não estimar seu consumo.
+- Corrigir a falha da prova Rust em detecção WinRT do fuso com leitura da API nativa Windows. Mapeamento Go/Rust desta prova cobre somente o fuso local e UTC; suporte geral precisa ser resolvido antes de calendário de produção.
+- A primeira tentativa de medir com túnel falhou antes de readiness por chave malformada. O segredo real permanece exclusivamente no terminal do usuário. Testes com texto fictício confirmaram a conversão SecureString no PowerShell 5.1 e demonstraram que doctor aprova somente formato, sem provar autenticação.
+- Preparar entrada protegida com classificação de erro sem exibir o valor, fora do checkout. Não insistir em criar novas chaves sem distinguir entrada abreviada, aspas, espaços e outros caracteres inválidos.
+- Enquanto o usuário está AFK, não iniciar fluxo que dependa da chave real. Processos de provas temporárias estão encerrados. Túnel original ainda precisa ser restaurado após resolver a entrada da chave.
+- Decisão final, atualização do estado no README, medição combinada, validação do plugin e commit `docs: select Recallly architecture` permanecem pendentes. Não publicar a comparação parcial como conclusão.
+
+## Decisão concluída em 12/10/2026
+
+- Escolher Rust com rmcp e stdio para o aplicativo futuro. Total privado medido com túnel e auxiliares: 61,48 MiB, menor entre as quatro provas; SDK oficial e chamada real pelo mesmo plugin confirmados. Justificativas, concessões e limites em ARCHITECTURE.md e PERFORMANCE.md.
+- Manter Node como implementação operacional nesta etapa. Não alterar o plugin nem salvar a troca de subprocesso no perfil. As quatro árvores temporárias foram encerradas e o perfil original foi restaurado, com readyz HTTP 200 e chamada real online às 2026-10-12T15:33:39.900Z.
+- Prever rusqlite, Tokio, lettre, DPAPI e mutex Windows no projeto futuro, sem implementar esses recursos nesta etapa. Resolver o mapeamento completo de fusos e reduzir FFI manual usando bindings mantidos antes de substituir o servidor original.
+- Aceitar maior complexidade de build Rust em troca do menor consumo observado e da distribuição menor. .NET self-contained é alternativa de reserva; Native AOT não foi medido. O consumo com SQLite e TLS precisará ser medido novamente.
+- Formato da chave aprovado após colagem pelo botão direito no campo protegido; segredo não lido nem persistido. Doctor não prova autenticação. A autenticação e a conexão foram comprovadas pelas chamadas reais, separadamente.
+- Registrar os dois timeouts iniciais nas trocas Go e Node, seguidos de sucesso. Não atribuir causa sem evidência nem tratar falhas como validação aprovada.
+- Versionar apenas fontes comparativas, locks, método, documentação e números anônimos. Compiladores, executáveis, perfis, chaves e resultados locais com caminhos continuam externos e ignorados.
+- Próxima etapa: migração mínima revisável para Rust com somente recallly_status, fuso completo e build Windows reproduzível. Armazenamento, agendador, SMTP, autostart, interface final, assinatura e atualização automática permanecem fora desta entrega.

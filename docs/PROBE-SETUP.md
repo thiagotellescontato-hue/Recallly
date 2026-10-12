@@ -89,4 +89,6 @@ Remove-Item Env:CONTROL_PLANE_API_KEY -ErrorAction SilentlyContinue
 $probeSecret = $null
 ```
 
-Não use exposição direta de porta, encaminhamento no roteador ou túnel de terceiros. Não grave perfis, certificados ou segredos no Git. O túnel está ativo e o plugin Recallly Probe foi instalado e conectado no ChatGPT web. Não houve registro da ferramenta nesta sessão Codex. Só uma chamada MCP real pelo chat comprova a integração.
+Não use exposição direta de porta, encaminhamento no roteador ou túnel de terceiros. Não grave perfis, certificados ou segredos no Git. Em 12/10/2026 a ferramenta foi invocada realmente pelo plugin nesta conversa e o servidor original Node foi restaurado e testado após a comparação. Não é necessário recriar o plugin. Mantenha o daemon original ativo e a chave temporária válida para novas chamadas.
+
+Nesta máquina, colar pelo botão direito no campo protegido resolveu a entrada que vinha sendo rejeitada como malformada. Cole somente o valor completo, sem aspas. A aprovação de formato pelo doctor não autentica a chave: confirme readiness e chamada real. O conteúdo da chave nunca deve ser enviado ao chat.

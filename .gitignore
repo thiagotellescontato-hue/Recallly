@@ -11,3 +11,12 @@ tunnel-client*
 *.p12
 .DS_Store
 Thumbs.db
+bench/local-config*.json
+bench/local-results*.json
+bench/out/
+bench/probes/**/bin/
+bench/probes/**/obj/
+bench/probes/**/target/
+*.exe
+*.dll
+*.pdb

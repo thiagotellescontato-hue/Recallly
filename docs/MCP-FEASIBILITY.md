@@ -1,6 +1,6 @@
 # Viabilidade MCP
 
-Consulta oficial em 07/10/2026. **Viável por documentação e comprovado localmente; integração dentro desta conversa não comprovada.** Esta sessão ocorre no Codex desktop, não no ChatGPT web. `recallly_status` não está registrada entre as ferramentas desta sessão. Executar um cliente pelo terminal não equivale a invocar um plugin pelo chat.
+Consulta oficial inicial em 07/10/2026 e guia Secure MCP Tunnel consultado novamente em 10/10. **Integração pelo plugin comprovada nesta conversa em 12/10/2026.** A ferramenta recallly_status está disponível e foi invocada diretamente pelo plugin Recallly Probe, sem simular a chamada pelo terminal. O resultado online foi confirmado nas quatro provas e no servidor Node original restaurado. Executar somente um cliente pelo terminal continua não sendo prova de conexão do chat.
 
 ## Conexão e requisitos
 
@@ -20,7 +20,7 @@ O [guia de autenticação](https://developers.openai.com/plugins/build/auth) des
 
 Comprovado: inicialização MCP, descoberta da ferramenta única, chamadas válidas, schema de saída, erro controlado e encerramento local, conforme [VALIDATION](VALIDATION.md). Na segunda etapa, a Platform autenticada permitiu criar o túnel Recallly Probe e confirmar sua associação à organização e ao workspace disponível. Cliente oficial Windows e perfil stdio preparados. Após entrada protegida da chave pelo usuário, doctor retornou RESULT ok; run está ativo e healthz/readyz responderam HTTP 200. O plugin privado foi criado, instalado e aparece Conectado no ChatGPT web.
 
-Ainda não comprovado: chamada real de recallly_status pelo chat e seleção do plugin nesta sessão Codex. A instalação e o estado Conectado não substituem essa chamada. A criação do registro de túnel, isoladamente, não comprova conexão.
+Em 12/10, chamadas reais de recallly_status pelo plugin retornaram os seis campos esperados com Node, Go, .NET e Rust. Após restaurar o perfil original Node, a chamada retornou online, versão 0.1.0, horário 2026-10-12T15:33:39.900Z e fuso America/Sao_Paulo. O identificador é UUID aleatório em memória, não identidade persistente da máquina. Houve timeouts transitórios na primeira chamada ao trocar para Go e ao restaurar Node; as repetições funcionaram, sem causa determinada. A instalação e o estado Conectado, isoladamente, continuam insuficientes para comprovar conexão.
 
 O [guia de teste de plugins](https://developers.openai.com/plugins/deploy/connect-chatgpt) recomenda instalar o plugin, abrir nova conversa, selecionar com `@` e verificar a chamada real. Só esse teste permite declarar conexão com o ChatGPT. Computador e cliente precisam permanecer disponíveis; desligamento, suspensão, rede bloqueada, associação incorreta, ferramenta desabilitada e políticas de workspace podem impedir comandos.
 

@@ -32,3 +32,26 @@ Repositório oficial clonado via HTTPS: `https://github.com/thiagotellescontato-
 O Git empacotado exigiu corrigir GIT_EXEC_PATH para localizar o helper HTTPS. Rede e subprocessos foram permitidos por execução escalada: tentativa inicial de clone falhou no proxy do sandbox e teste inicial falhou com spawn EPERM. Não foi necessário alterar o sistema.
 
 O terminal interativo Windows PowerShell bloqueou scripts .ps1 por política de execução. O túnel foi iniciado por comandos diretos no console, sem alterar essa política. Cliente oficial ativo; healthz/readyz retornaram HTTP 200. Nenhuma credencial foi gravada no checkout.
+
+## Ferramentas da comparação de arquitetura
+
+Preparadas até 10/10/2026, fora do checkout em `work/architecture-work` da pasta desta conversa:
+
+| Ferramenta | Versão ou uso |
+| --- | --- |
+| Go portátil | 1.27.1 windows/amd64 |
+| .NET SDK portátil | 10.0.401, runtime 10.0.12 |
+| Rust e Cargo portáteis | 1.99.0, target x86_64-pc-windows-gnu |
+| LLVM-MinGW portátil | release 20261006, diagnóstico de linking |
+| GNU binutils MSYS2 portátil | pacote 2.47-4 e dependências de runtime verificadas |
+| Windows PowerShell do usuário | 5.1.19041.6456, conversão SecureString testada com texto fictício |
+
+Downloads oficiais com checksum conferido; SDKs, caches e executáveis não são versionados. Caminhos de ferramentas foram aplicados somente aos processos de compilação. A tentativa de rebuild Go encontrou bloqueio ao escrever o token de telemetria da ferramenta em sua configuração padrão; o rebuild passou com configuração Go isolada em `work/architecture-work/go-user-settings` e telemetria off, sem alterar a configuração original do usuário. Isso é separado dos servidores comparativos, que não implementam telemetria.
+
+Exceção à instalação exclusivamente portátil: o instalador oficial Microsoft Build Tools 2022, com assinatura válida, instalou Visual Studio Installer e seu serviço de elevação. Os componentes C++ não foram confirmados: tentativas encerraram com código 1 e erros de arquivos temporários ausentes. Não se declara Native AOT disponível. Nenhum serviço ou inicialização automática do Recallly foi criado.
+
+`pnpm check` e `pnpm test` passaram novamente em 10/10, incluindo encerramento do servidor. As quatro provas comparativas também passaram na validação MCP repetida. A medição combinada permanece bloqueada pela entrada malformada da chave no terminal protegido; o conteúdo da chave não foi lido pelo agente. O túnel não está ativo neste ponto da comparação.
+
+## Estado após a rodada de 12/10/2026
+
+O bloqueio de entrada foi superado com colagem pelo botão direito no prompt protegido. As quatro medições combinadas terminaram e cada prova respondeu pelo plugin instalado. Todas as árvores temporárias foram encerradas. O daemon original foi restaurado com perfil stdio Node preservado; readyz HTTP 200 e chamada real online confirmados. Somente o daemon original e seus filhos necessários permanecem para novas chamadas. A chave fica no ambiente do processo durante a execução; não foi persistida em arquivo nem acessada pelo agente. Sua validade e a disponibilidade do computador continuam condições para conexão.
