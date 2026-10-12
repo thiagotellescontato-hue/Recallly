@@ -1,0 +1,365 @@
+{
+  "version": "0.2.0",
+  "samples": [
+    {
+      "sample": 1,
+      "role": "server",
+      "private_bytes": 802816,
+      "working_set_bytes": 3846144,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0215503
+    },
+    {
+      "sample": 1,
+      "role": "auxiliary",
+      "private_bytes": 6553600,
+      "working_set_bytes": 11247616,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0215503
+    },
+    {
+      "sample": 1,
+      "role": "total",
+      "private_bytes": 7356416,
+      "working_set_bytes": 15093760,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0215503
+    },
+    {
+      "sample": 2,
+      "role": "server",
+      "private_bytes": 802816,
+      "working_set_bytes": 3846144,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0049903
+    },
+    {
+      "sample": 2,
+      "role": "auxiliary",
+      "private_bytes": 6553600,
+      "working_set_bytes": 11247616,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0049903
+    },
+    {
+      "sample": 2,
+      "role": "total",
+      "private_bytes": 7356416,
+      "working_set_bytes": 15093760,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0049903
+    },
+    {
+      "sample": 3,
+      "role": "server",
+      "private_bytes": 802816,
+      "working_set_bytes": 3846144,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0137264
+    },
+    {
+      "sample": 3,
+      "role": "auxiliary",
+      "private_bytes": 6553600,
+      "working_set_bytes": 11247616,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0137264
+    },
+    {
+      "sample": 3,
+      "role": "total",
+      "private_bytes": 7356416,
+      "working_set_bytes": 15093760,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0137264
+    },
+    {
+      "sample": 4,
+      "role": "server",
+      "private_bytes": 802816,
+      "working_set_bytes": 3846144,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0049591
+    },
+    {
+      "sample": 4,
+      "role": "auxiliary",
+      "private_bytes": 6553600,
+      "working_set_bytes": 11247616,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0049591
+    },
+    {
+      "sample": 4,
+      "role": "total",
+      "private_bytes": 7356416,
+      "working_set_bytes": 15093760,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0049591
+    },
+    {
+      "sample": 5,
+      "role": "server",
+      "private_bytes": 802816,
+      "working_set_bytes": 3846144,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0064989
+    },
+    {
+      "sample": 5,
+      "role": "auxiliary",
+      "private_bytes": 6553600,
+      "working_set_bytes": 11247616,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0064989
+    },
+    {
+      "sample": 5,
+      "role": "total",
+      "private_bytes": 7356416,
+      "working_set_bytes": 15093760,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0064989
+    },
+    {
+      "sample": 6,
+      "role": "server",
+      "private_bytes": 745472,
+      "working_set_bytes": 3821568,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.014296
+    },
+    {
+      "sample": 6,
+      "role": "auxiliary",
+      "private_bytes": 6553600,
+      "working_set_bytes": 11247616,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.014296
+    },
+    {
+      "sample": 6,
+      "role": "total",
+      "private_bytes": 7299072,
+      "working_set_bytes": 15069184,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.014296
+    },
+    {
+      "sample": 7,
+      "role": "server",
+      "private_bytes": 745472,
+      "working_set_bytes": 3821568,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0017001
+    },
+    {
+      "sample": 7,
+      "role": "auxiliary",
+      "private_bytes": 6553600,
+      "working_set_bytes": 11247616,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0017001
+    },
+    {
+      "sample": 7,
+      "role": "total",
+      "private_bytes": 7299072,
+      "working_set_bytes": 15069184,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0017001
+    },
+    {
+      "sample": 8,
+      "role": "server",
+      "private_bytes": 745472,
+      "working_set_bytes": 3821568,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.013496
+    },
+    {
+      "sample": 8,
+      "role": "auxiliary",
+      "private_bytes": 6553600,
+      "working_set_bytes": 11247616,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.013496
+    },
+    {
+      "sample": 8,
+      "role": "total",
+      "private_bytes": 7299072,
+      "working_set_bytes": 15069184,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.013496
+    },
+    {
+      "sample": 9,
+      "role": "server",
+      "private_bytes": 745472,
+      "working_set_bytes": 3821568,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0302628
+    },
+    {
+      "sample": 9,
+      "role": "auxiliary",
+      "private_bytes": 6553600,
+      "working_set_bytes": 11247616,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0302628
+    },
+    {
+      "sample": 9,
+      "role": "total",
+      "private_bytes": 7299072,
+      "working_set_bytes": 15069184,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0302628
+    },
+    {
+      "sample": 10,
+      "role": "server",
+      "private_bytes": 745472,
+      "working_set_bytes": 3821568,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0077691
+    },
+    {
+      "sample": 10,
+      "role": "auxiliary",
+      "private_bytes": 6553600,
+      "working_set_bytes": 11247616,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0077691
+    },
+    {
+      "sample": 10,
+      "role": "total",
+      "private_bytes": 7299072,
+      "working_set_bytes": 15069184,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0077691
+    },
+    {
+      "sample": 11,
+      "role": "server",
+      "private_bytes": 745472,
+      "working_set_bytes": 3821568,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0020868
+    },
+    {
+      "sample": 11,
+      "role": "auxiliary",
+      "private_bytes": 6553600,
+      "working_set_bytes": 11247616,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0020868
+    },
+    {
+      "sample": 11,
+      "role": "total",
+      "private_bytes": 7299072,
+      "working_set_bytes": 15069184,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0020868
+    },
+    {
+      "sample": 12,
+      "role": "server",
+      "private_bytes": 745472,
+      "working_set_bytes": 3821568,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0101883
+    },
+    {
+      "sample": 12,
+      "role": "auxiliary",
+      "private_bytes": 6553600,
+      "working_set_bytes": 11247616,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0101883
+    },
+    {
+      "sample": 12,
+      "role": "total",
+      "private_bytes": 7299072,
+      "working_set_bytes": 15069184,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0101883
+    },
+    {
+      "sample": 13,
+      "role": "server",
+      "private_bytes": 745472,
+      "working_set_bytes": 3821568,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0018237
+    },
+    {
+      "sample": 13,
+      "role": "auxiliary",
+      "private_bytes": 6553600,
+      "working_set_bytes": 11247616,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0018237
+    },
+    {
+      "sample": 13,
+      "role": "total",
+      "private_bytes": 7299072,
+      "working_set_bytes": 15069184,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0018237
+    },
+    {
+      "sample": 14,
+      "role": "server",
+      "private_bytes": 745472,
+      "working_set_bytes": 3821568,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0102579
+    },
+    {
+      "sample": 14,
+      "role": "auxiliary",
+      "private_bytes": 6553600,
+      "working_set_bytes": 11247616,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0102579
+    },
+    {
+      "sample": 14,
+      "role": "total",
+      "private_bytes": 7299072,
+      "working_set_bytes": 15069184,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0102579
+    },
+    {
+      "sample": 15,
+      "role": "server",
+      "private_bytes": 745472,
+      "working_set_bytes": 3821568,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0212133
+    },
+    {
+      "sample": 15,
+      "role": "auxiliary",
+      "private_bytes": 6553600,
+      "working_set_bytes": 11247616,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0212133
+    },
+    {
+      "sample": 15,
+      "role": "total",
+      "private_bytes": 7299072,
+      "working_set_bytes": 15069184,
+      "cpu_one_core_percent": 0,
+      "interval_seconds": 2.0212133
+    }
+  ]
+}

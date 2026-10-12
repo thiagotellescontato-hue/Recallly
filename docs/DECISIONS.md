@@ -52,3 +52,15 @@ Fora do escopo: persistência de lembretes, agendador, SMTP, credenciais de e-ma
 - Registrar os dois timeouts iniciais nas trocas Go e Node, seguidos de sucesso. Não atribuir causa sem evidência nem tratar falhas como validação aprovada.
 - Versionar apenas fontes comparativas, locks, método, documentação e números anônimos. Compiladores, executáveis, perfis, chaves e resultados locais com caminhos continuam externos e ignorados.
 - Próxima etapa: migração mínima revisável para Rust com somente recallly_status, fuso completo e build Windows reproduzível. Armazenamento, agendador, SMTP, autostart, interface final, assinatura e atualização automática permanecem fora desta entrega.
+
+## Migração da prova para Rust 0.2.0
+
+- Implementação principal na raiz Cargo/src; não promover bench/ a aplicação. Versão 0.2.0 no handshake e resposta da única ferramenta recallly_status. Manter os seis campos, anotações de leitura e metadados noauth.
+- Fixar Rust 1.99.0, dependências diretas exatas e Cargo.lock. Publicação Windows GNU x64 release com LTO, símbolos removidos e sem privilégio administrativo. Build e caches ficam fora do checkout.
+- Substituir FFI manual pelo binding windows-sys; converter a chave Windows pela tabela CLDR de windows-timezones. Não usar nome localizado, lista de dois fusos nem WinRT usado no diagnóstico comparativo. Falhas desconhecidas não devem virar UTC silenciosamente.
+- Preservar integralmente src/server.mjs como fallback Node 0.1.0 e manter seus testes. pnpm test continua validando Node; pnpm test:rust valida o executável principal. Node/pnpm são ferramentas auxiliares, não runtime da aplicação Rust.
+- Usar UUID v4 aleatório em memória por execução, estável na sessão e diferente após reiniciar. Não gravar UUIDs nos novos resultados ou saídas de validação Rust.
+- Preparar Connect-Probe.cmd e tunnel.mjs para validação local, doctor, troca temporária via --mcp.command, health/ready e reversão Node. Não salvar a troca no perfil, recriar plugin ou recuperar credenciais de processos.
+- Na retomada, nenhum daemon estava ativo, health não estava disponível e a chave não existia no ambiente do agente. Não foi possível ativar Rust nem restaurar um daemon Node autenticado sem participação do usuário. Perfil e comando Node foram preservados; não apresentar fallback disponível como conexão online.
+- Testes locais e medição curta Rust concluídos. A prova comparativa 0.1.0 respondeu pelo chat anteriormente; a validação ponta a ponta da aplicação 0.2.0 permanece pendente. Publicar a implementação localmente testada sem inventar essa evidência.
+- Manter credenciais, configuração local, executáveis, target e caches fora do Git. Próximo passo após validar 0.2.0 pelo chat: começar o núcleo persistente de lembretes, sem SMTP, agendador ou outras funcionalidades nesta entrega.

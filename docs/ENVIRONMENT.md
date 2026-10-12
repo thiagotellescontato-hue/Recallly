@@ -55,3 +55,7 @@ Exceção à instalação exclusivamente portátil: o instalador oficial Microso
 ## Estado após a rodada de 12/10/2026
 
 O bloqueio de entrada foi superado com colagem pelo botão direito no prompt protegido. As quatro medições combinadas terminaram e cada prova respondeu pelo plugin instalado. Todas as árvores temporárias foram encerradas. O daemon original foi restaurado com perfil stdio Node preservado; readyz HTTP 200 e chamada real online confirmados. Somente o daemon original e seus filhos necessários permanecem para novas chamadas. A chave fica no ambiente do processo durante a execução; não foi persistida em arquivo nem acessada pelo agente. Sua validade e a disponibilidade do computador continuam condições para conexão.
+
+## Retomada da migração 0.2.0
+
+Não foram instaladas novas ferramentas. Rust principal usa a cadeia portátil existente, caches cargo-cache e saída rust-probe-target em work/architecture-work, fora do checkout. Dependências novas são fixadas no Cargo.lock principal. Ao retomar após a interrupção, nenhum daemon estava ativo e a chave não estava disponível no ambiente do agente; perfil externo Node preservado, ativação autenticada pendente. Configuração operacional sem credenciais preparada em local/, ignorada pelo Git. Estado e testes da nova aplicação em VALIDATION.md.

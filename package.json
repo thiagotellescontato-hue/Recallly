@@ -1,6 +1,6 @@
 {
   "name": "recallly-probe",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -8,9 +8,11 @@
   },
   "packageManager": "pnpm@11.25.0",
   "scripts": {
-    "start": "node src/server.mjs",
-    "check": "node --check src/server.mjs && node --check test/probe.mjs",
-    "test": "node test/probe.mjs"
+    "start": "cargo run --release --locked",
+    "start:node": "node src/server.mjs",
+    "check": "node --check src/server.mjs && node --check test/probe.mjs && node --check test/rust-probe.mjs && node --check scripts/tunnel.mjs",
+    "test": "node test/probe.mjs",
+    "test:rust": "node test/rust-probe.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.1",

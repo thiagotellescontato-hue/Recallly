@@ -1,94 +1,74 @@
 # Executar Recallly Probe
 
-## Execução local
+## Prova principal Rust 0.2.0
 
-Use PowerShell na raiz do checkout. Requer Node.js 22 ou superior e pnpm 11.25.0 disponíveis no PATH. Não é necessária chave OpenAI para o teste local.
+Execute a partir da raiz do checkout no Windows x64. A aplicação usa somente stdio e expõe recallly_status, sem banco, rede, arquivos ou telemetria. O processo espera um cliente MCP; silêncio no terminal é normal. Node 0.1.0 continua em src/server.mjs para reversão.
+
+Rust 1.99.0 e dependências diretas fixas estão em rust-toolchain.toml e Cargo.toml. Cargo.lock fixa também as dependências transitivas. Não é necessária chave OpenAI para compilar ou testar localmente. Nesta máquina, as ferramentas portáteis já preparadas ficam fora do checkout. Configure somente esta sessão PowerShell:
 
 ```powershell
+$tools = [IO.Path]::GetFullPath((Join-Path (Get-Location) '../architecture-work'))
+$env:PATH = "$tools/msys2/mingw64/bin;$tools/rust/bin;$tools/rust/lib/rustlib/x86_64-pc-windows-gnu/bin/self-contained;$env:PATH"
+$env:CARGO_HOME = Join-Path $tools 'cargo-cache'
+$env:CARGO_TARGET_DIR = Join-Path $tools 'rust-probe-target'
+$env:RUSTFLAGS = '-C link-self-contained=yes'
+```
+
+Não misture esse target GNU com o wrapper GCC LLVM-MinGW. Em outra máquina, prepare Rust 1.99.0 GNU x64 e GNU binutils compatível; ajuste os diretórios da sessão. Não é necessário alterar PATH global, política de execução ou instalar a aplicação como administrador.
+
+Compilar e testar:
+
+```powershell
+cargo test --locked
+cargo build --release --locked
 pnpm install --frozen-lockfile
 pnpm check
 pnpm test
+pnpm test:rust
 ```
 
-`check` faz a verificação sintática, sem etapa de compilação. `test` inicia o servidor, conecta um cliente do SDK MCP, lista e chama a ferramenta, verifica erros e encerra o processo automaticamente.
+Cargo test cobre conversão de fusos; pnpm test mantém o teste do fallback Node; pnpm test:rust inicia a aplicação release e cobre o protocolo, contrato, erros, recuperação, identidade por execução, stderr e EOF. Node e pnpm são ferramentas de teste e operação, não dependências do executável Rust em execução. Use os binários já configurados nesta máquina se eles não estiverem no PATH do terminal externo.
 
-Para iniciar manualmente:
+pnpm start é um atalho de desenvolvimento para cargo run --release --locked; pnpm start:node executa o fallback. No túnel use o executável Rust diretamente, sem Cargo, pnpm ou compilação na inicialização.
+
+Executar manualmente:
 
 ```powershell
-node src/server.mjs
+& "$env:CARGO_TARGET_DIR/release/recallly-probe.exe"
 ```
 
-O servidor espera mensagens MCP no stdin; silêncio no terminal é esperado. Pare com Ctrl+C. Um cliente stdio deve iniciar `node` com o argumento absoluto de `src/server.mjs`; não envie texto livre ao stdin. Há somente `recallly_status`, com argumentos `{}` ou omitidos. Propriedades extras são rejeitadas.
+Pare com Ctrl+C. O cliente MCP deve iniciar esse executável, sem argumentos. Pode definir RECALLLY_PROBE_EXE para testar um artefato em outro local; caso contrário o teste usa CARGO_TARGET_DIR/release/recallly-probe.exe ou target/release/recallly-probe.exe. Não envie texto livre ao stdin.
 
-## Conectar ao ChatGPT sem publicar porta
+Para uma medição curta, defina RECALLLY_MEASUREMENT_FILE para um JSON externo ao checkout, RECALLLY_POWERSHELL para pwsh.exe e execute pnpm test:rust. São dez segundos de estabilização e 15 amostras a cada dois segundos, sem compilar em paralelo. O resultado contém apenas versão e métricas numéricas por função do processo, sem UUID, caminhos ou nomes da máquina.
 
-Preparação já concluída: túnel Recallly Probe criado e associação à organização e ao workspace disponível conferida. Identificador não secreto: `tunnel_6ac6d763b35c8191bd9e8ae6ece0b62e`. Cliente oficial Windows x64 0.0.16 baixado e checksum validado. Perfil stdio gerado e preflight do executável aprovado. Thiago criou e inseriu a chave em campo protegido. Doctor aprovado, run ativo e health/ready HTTP 200. Plugin privado instalado e conectado no ChatGPT web.
+## Túnel oficial e reversão
 
-Na pasta desta conversa, o cliente fica em `work/tools/secure-mcp/v0.0.16` e o perfil em `work/secure-mcp/profiles`; ambos fora do checkout `work/Recallly`. Nenhum PATH global foi alterado. O arquivo externo `outputs/Start-RecalllyTunnel.ps1` recebe a chave com entrada protegida, faz doctor e só então inicia run, com health em loopback e sem gravar a chave.
+O plugin instalado não deve ser recriado. O perfil original Node e o cliente oficial Secure MCP Tunnel 0.0.16 ficam fora do checkout, em ../secure-mcp/profiles e ../tools/secure-mcp/v0.0.16 na estrutura preparada. O perfil usa uma referência à variável CONTROL_PLANE_API_KEY, nunca uma chave gravada. Não altere o identificador ou a associação existentes. O [guia oficial](https://developers.openai.com/api/docs/guides/secure-mcp-tunnels) documenta conexão de saída HTTPS e stdio. Não publique portas nem use túnel de terceiros.
 
-### Iniciar no computador preparado
+A configuração operacional local/tunnel-config.json já foi preparada nesta máquina e é ignorada pelo Git. Ela contém somente caminhos locais e o nome do perfil: node, nodeServer, rustExecutable, tunnel, powershell, profile, profileDir e healthFile. Não coloque credenciais nesse JSON. Em outro ambiente, configure esses campos para executáveis reais e perfil externo existente; healthFile deve ficar fora do checkout. O iniciador não cria nem sobrescreve o perfil.
 
-A chave foi criada pelo usuário com Tunnels Read + Use e validade de um dia. O terminal Windows PowerShell bloqueou o arquivo .ps1 por política de execução. Use os comandos diretamente no console; nenhuma política foi alterada ou contornada. Na pasta desta conversa:
+Iniciar Rust no computador preparado, a partir da raiz do checkout:
 
 ```powershell
-$probeSecret = Read-Host 'Chave de runtime do túnel' -AsSecureString
-$env:CONTROL_PLANE_API_KEY = [System.Net.NetworkCredential]::new('', $probeSecret).Password
-& '.\work\tools\secure-mcp\v0.0.16\tunnel-client.exe' doctor --profile recallly-probe --profile-dir '.\work\secure-mcp\profiles' --explain
+.\scripts\Connect-Probe.cmd rust
 ```
 
-Somente após RESULT ok, execute:
+O iniciador pede a chave no campo protegido. Cole o valor completo usando o botão direito, sem aspas, e pressione Enter. Nunca envie a chave ao chat. A chave de runtime precisa estar válida e ter Tunnels Read + Use no workspace associado. Formato aprovado por doctor não comprova autenticação.
+
+Antes de trocar o subprocesso, o iniciador valida a aplicação localmente e executa doctor. Só então encerra uma árvore de túnel que corresponda ao executável e ao perfil configurados; recusa substituir túnel não relacionado. Inicia o cliente oficial com --mcp.command apontando para Rust somente nessa execução, sem salvar a troca no perfil. Confere healthz e readyz exclusivamente em 127.0.0.1 e mantém a janela aberta. Mensagens de operação não imprimem credenciais, caminhos ou respostas com UUID.
+
+Para parar, pressione Ctrl+C e aguarde o retorno ao prompt. O iniciador solicita encerramento do túnel e seus filhos. Se fechar a janela à força, confira os processos antes de iniciar novamente.
+
+Restaurar Node imediatamente, usando o mesmo perfil e uma chave válida no campo protegido:
 
 ```powershell
-& '.\work\tools\secure-mcp\v0.0.16\tunnel-client.exe' run --profile recallly-probe --profile-dir '.\work\secure-mcp\profiles' --health.url-file '.\work\secure-mcp\health.url' --log.level warn --mcp.stdio-send-initialized-notification
+.\scripts\Connect-Probe.cmd node
 ```
 
-Mantenha o terminal aberto para o teste pelo ChatGPT. Insira o segredo apenas no campo protegido, nunca na linha de comando ou no chat. A existência de health.url sozinha não comprova prontidão; nesta execução healthz e readyz retornaram HTTP 200.
+Esse comando valida src/server.mjs, encerra a árvore configurada e inicia o túnel com o comando Node preservado. Não apaga Rust nem altera o plugin. A operação requer uma chave válida; sem ela, preserve um daemon funcional já existente, não tente extrair seu ambiente. O segredo não é persistido pelo iniciador.
 
-### Configuração reproduzível pelo cliente oficial
+## Validação pelo chat
 
-Para reproduzir o perfil fora do Git em outro checkout existente, baixe a [release oficial atual](https://github.com/openai/tunnel-client/releases/latest) indicada pelo [guia oficial](https://developers.openai.com/api/docs/guides/secure-mcp-tunnels). Confirme checksum e arquitetura. Com o cliente no PATH, execute na raiz do checkout; o diretório de perfil é externo. Não sobrescreva o perfil preparado nesta máquina nem repita init sem necessidade.
+Após o túnel Rust ficar pronto, selecione o plugin Recallly Probe já instalado e envie: `Use Recallly Probe e chame recallly_status sem argumentos. Confirme a versão 0.2.0. Não use o terminal para simular a chamada.`
 
-```powershell
-$probeTunnelId = Read-Host 'Identificador do túnel criado na Platform'
-$probeNode = (Get-Command node).Source.Replace('\', '/')
-$probeServer = (Resolve-Path 'src/server.mjs').Path.Replace('\', '/')
-$probeCommand = '"' + $probeNode + '" "' + $probeServer + '"'
-$probeProfileDir = [System.IO.Path]::GetFullPath((Join-Path (Get-Location) '../secure-mcp/profiles'))
-$probeHealthFile = Join-Path $probeProfileDir '../health.url'
-tunnel-client help quickstart
-tunnel-client init --sample sample_mcp_stdio_local --profile recallly-probe --profile-dir $probeProfileDir --tunnel-id $probeTunnelId --mcp-command $probeCommand --health-listen-addr 127.0.0.1:0
-$probeSecret = Read-Host 'Chave de runtime do túnel' -AsSecureString
-try {
-    $env:CONTROL_PLANE_API_KEY = [System.Net.NetworkCredential]::new('', $probeSecret).Password
-    tunnel-client doctor --profile recallly-probe --profile-dir $probeProfileDir --explain
-    if ($LASTEXITCODE -ne 0) { throw 'Diagnóstico do túnel falhou.' }
-    tunnel-client run --profile recallly-probe --profile-dir $probeProfileDir --health.url-file $probeHealthFile --log.level warn --mcp.stdio-send-initialized-notification
-} finally {
-    Remove-Item Env:CONTROL_PLANE_API_KEY -ErrorAction SilentlyContinue
-    $probeSecret.Dispose()
-    $probeSecret = $null
-}
-```
-
-O parser do cliente 0.0.16 removeu barras invertidas da string de comando no primeiro teste; barras `/` e aspas passaram no init real. O cliente inicia o servidor stdio; não inicie uma segunda cópia manualmente. Nesta máquina, autenticação de runtime, doctor e run já foram testados com sucesso. Não ative MCP stub, Harpoon, plugin opcional de gestão do Codex, logs HTTP brutos ou acesso remoto à interface de saúde.
-
-### Testar o plugin instalado
-
-O plugin já está instalado: [Recallly Probe](https://chatgpt.com/plugins/plugin_asdk_app_6ac6dabb9f9c81919665052bb521dfa9). Mantenha o terminal aberto, clique em Testar no chat e confira a seleção do plugin antes de enviar o texto abaixo. Os passos seguintes documentam a instalação para outra sessão, sem necessidade de recriar o plugin atual.
-
-1. No ChatGPT web, no workspace associado, abra Plugins → `+` → Add custom MCP server. Nome: Recallly Probe. Connection: Tunnel; selecione ou informe `tunnel_6ac6d763b35c8191bd9e8ae6ece0b62e`. Authentication: No authentication. Revise o aviso exibido e crie o plugin.
-2. Confirme que a descoberta mostra somente `recallly_status`. Instale-o, abra uma conversa, selecione-o com `@` e envie exatamente: `Use Recallly Probe e chame recallly_status sem argumentos. Não use o terminal nem outras ferramentas para simular essa chamada.`
-3. Confira a chamada real e os seis campos não sensíveis. Sem o plugin carregado nesta conversa, enviar o texto aqui não prova conexão e não autoriza substituir a chamada por teste no terminal.
-
-Se a opção não existir ou o túnel não aparecer, verifique associação de workspace e Tunnels Read + Use. O [guia atual de custom MCP](https://developers.openai.com/api/docs/guides/custom-mcp-server) não impõe um passo separado de Developer Mode. Não exporte logs do túnel ou credenciais.
-
-Para parar: Ctrl+C no terminal do túnel e confirme que o cliente e seu processo stdio encerraram. Limpe a variável temporária ou feche o terminal:
-
-```powershell
-Remove-Item Env:CONTROL_PLANE_API_KEY -ErrorAction SilentlyContinue
-$probeSecret = $null
-```
-
-Não use exposição direta de porta, encaminhamento no roteador ou túnel de terceiros. Não grave perfis, certificados ou segredos no Git. Em 12/10/2026 a ferramenta foi invocada realmente pelo plugin nesta conversa e o servidor original Node foi restaurado e testado após a comparação. Não é necessário recriar o plugin. Mantenha o daemon original ativo e a chave temporária válida para novas chamadas.
-
-Nesta máquina, colar pelo botão direito no campo protegido resolveu a entrada que vinha sendo rejeitada como malformada. Cole somente o valor completo, sem aspas. A aprovação de formato pelo doctor não autentica a chave: confirme readiness e chamada real. O conteúdo da chave nunca deve ser enviado ao chat.
+Uma resposta local ou readiness não comprova essa chamada. A prova comparativa Rust 0.1.0 respondeu pelo plugin anteriormente; isso não valida automaticamente a aplicação principal 0.2.0. A validação remota desta versão permanece pendente até uma chamada real. O computador, a rede, a chave e o daemon precisam continuar disponíveis; não há inicialização automática.

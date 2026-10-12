@@ -1,5 +1,35 @@
 # Validação realizada
 
+## Migração principal Rust 0.2.0 em 12/10/2026
+
+Baseline antes de editar: pnpm install --frozen-lockfile, pnpm check e pnpm test passaram com Node 0.1.0. A chamada pelo plugin também confirmou Node 0.1.0 antes da interrupção. Na retomada, nenhum tunnel-client estava ativo, não havia health disponível nem CONTROL_PLANE_API_KEY no ambiente do agente. Não se tentou recuperar segredo do processo ou do usuário. O perfil Node externo foi preservado.
+
+Comandos executados na implementação principal, com Rust 1.99.0 GNU x64, GNU binutils e caches externos:
+
+```text
+cargo test --locked
+cargo build --release --locked
+cargo build --release --locked --offline
+pnpm install --frozen-lockfile
+pnpm check
+pnpm test
+pnpm test:rust
+```
+
+Os dois testes unitários passaram: conversão CLDR de São Paulo, UTC, Los Angeles, Berlim, Tóquio e Índia; rejeição explícita de chave vazia/desconhecida. O teste MCP usa o cliente oficial TypeScript e executa duas sessões novas no artefato release. Conferiu initialize e versão 0.2.0, descoberta de exatamente recallly_status, inputSchema sem propriedades adicionais, outputSchema dos seis campos e anotações de leitura/não destrutiva/idempotente/sem mundo aberto, além de metadados noauth.
+
+Chamadas com objeto vazio e argumentos omitidos passaram. service Recallly, status online, versão 0.2.0, ISO 8601 UTC atual, fuso America/Sao_Paulo e UUID v4 foram conferidos sem imprimir UUID. Texto JSON corresponde a structuredContent. UUID foi estável na sessão e diferente após nova execução. Propriedade extra, tentativa de definir fuso, ferramenta desconhecida, argumentos string e array falharam com erro MCP controlado; timeout ou desconexão não contam como rejeição válida. Nova chamada após os erros funcionou. stderr permaneceu vazio, os subprocessos foram encerrados e um teste separado confirmou saída de código 0 ao fechar stdin depois de initialize/initialized, sem depender de matar o servidor.
+
+Build release com lockfile passou. Repetição incremental offline produziu o mesmo SHA-256: caf60d69ef7bb80b9a1663c5204cbb6eb08dfff9592eb8a1165af7572e30819a. Tamanho do executável: 1.021.440 bytes, aproximadamente 0,97 MiB. Isso confirma o rebuild neste ambiente e cache; não comprova identidade binária entre computadores ou builds limpos independentes. O executável não foi versionado.
+
+Medição curta depois da compilação, sem túnel e sem compilar em paralelo: dez segundos de estabilização e 15 amostras a cada dois segundos, usando o mesmo coletor Windows da comparação. Memória privada mediana do servidor 0,7109375 MiB, auxiliar de console 6,25 MiB, total local 6,9609375 MiB. WS mediano servidor 3,64453125 MiB, total 14,37109375 MiB. CPU mediana e máxima 0,00% nos intervalos observados, não consumo teoricamente nulo. As [amostras anônimas](results/2026-10-12-rust-0.2.0-idle.json) não contêm UUID, PID, nomes de usuário, caminhos, IP ou identificador de túnel. Não houve regressão grosseira contra a prova Rust comparativa (0,70 MiB privados do servidor); não foi repetida a comparação entre quatro tecnologias. Não há medição combinada 0.2.0 com túnel.
+
+Iniciador protegido: parsing PowerShell e sintaxe Node passaram. Sem chave, o helper rejeitou a operação de forma controlada antes de iniciar ou substituir processos. Teste autenticado de doctor/run/health/ready em Rust 0.2.0 não foi executado por falta da chave; o script preparado não é evidência desse teste. O túnel está parado, e Node permanece disponível e testado para reversão, sem alegação de estar online agora. O plugin não foi alterado. Ativação e chamada real 0.2.0 pelo ChatGPT continuam pendentes; o sucesso anterior do comparativo 0.1.0 não substitui essa validação.
+
+Nenhum lembrete, banco, agendador, SMTP, e-mail, autostart ou ferramenta adicional foi implementado. Após a validação real da versão 0.2.0, o próximo passo será começar o núcleo persistente de lembretes em uma nova etapa.
+
+## Histórico anterior à migração
+
 ## Atualização em 12/10/2026
 
 Integração real comprovada nesta conversa por invocação direta do plugin Recallly Probe. As quatro provas comparativas passaram cinco ciclos MCP locais e chamadas reais pelo mesmo túnel. Depois das medições o servidor Node original foi restaurado: readyz HTTP 200 e recallly_status online, versão 0.1.0, horário 2026-10-12T15:33:39.900Z e fuso America/Sao_Paulo. Sem armazenamento do UUID de sessão nos resultados comparativos. Dois timeouts iniciais nas trocas Go e Node foram seguidos de sucesso; causa não determinada.

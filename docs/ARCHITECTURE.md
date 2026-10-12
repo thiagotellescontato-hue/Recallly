@@ -1,5 +1,19 @@
 # Comparação de arquitetura
 
+## Implementação principal após a migração
+
+Em 12/10/2026, a aplicação principal passou a ser Rust 0.2.0 na raiz do projeto: Cargo.toml, Cargo.lock, rust-toolchain.toml e src/main.rs, src/probe.rs e src/timezone.rs. bench/ continua exclusivamente comparativo. Node 0.1.0 foi preservado em src/server.mjs e seus testes continuam disponíveis. A migração não substituiu o subprocesso do túnel nem alterou o plugin; sua ativação depende da chave não disponível no ambiente do agente. A chamada remota 0.2.0 está pendente.
+
+Dependências diretas têm versões exatas, incluindo rmcp 3.5.1, Tokio 1.53.2, windows-sys 0.61.2 e windows-timezones 0.5.1. Os bindings mantidos Windows substituem a estrutura FFI manual comparativa. GetDynamicTimeZoneInformation lê TimeZoneKeyName, independente do nome de exibição localizado; windows-timezones converte pela tabela Unicode CLDR para o identificador IANA representativo global. Não há mais uma lista limitada a São Paulo e UTC. Chave desconhecida, UTF-16 inválido ou falha nativa encerram a inicialização com mensagem genérica, sem presumir UTC nem expor dados locais. Aliases IANA e ambiguidades territoriais do mapeamento Windows continuam condições da tabela, não detecção de localização geográfica.
+
+Fontes primárias: [API Windows](https://learn.microsoft.com/en-us/windows/win32/api/timezoneapi/nf-timezoneapi-getdynamictimezoneinformation), [bindings Microsoft](https://github.com/microsoft/windows-rs), [windows-timezones 0.5.1](https://docs.rs/windows-timezones/0.5.1/windows_timezones/enum.WindowsTimezone.html) e [origem CLDR da biblioteca](https://github.com/kyrias/windows-timezones). A aplicação lê apenas estado nativo necessário a horário, fuso e aleatoriedade; não abre portas, acessa rede, escreve arquivos ou implementa telemetria. Scripts de desenvolvimento e operação são separados do executável.
+
+Consumo privado local mediano: servidor 0,71 MiB, auxiliar 6,25 MiB, total 6,96 MiB; sem regressão grosseira em relação à prova Rust anterior. Não se reaplica automaticamente o total combinado de 61,48 MiB à nova versão. Build, testes e limites estão em VALIDATION.md; comandos e reversão em PROBE-SETUP.md.
+
+No produto futuro, servidor local permanentemente disponível manterá dados e executará os lembretes; ChatGPT será a interface principal por ferramentas MCP restritas de criação, consulta, alteração e cancelamento. Nenhuma dessas ferramentas ou persistência foi implementada. Após a validação real 0.2.0 pelo chat, o próximo passo será começar o núcleo persistente de lembretes, em uma etapa separada.
+
+## Histórico da decisão
+
 Decisão em 12/10/2026: escolher Rust para o aplicativo futuro, com SDK MCP oficial rmcp, transporte stdio e Secure MCP Tunnel oficial. As quatro provas passaram localmente e responderam a chamadas reais do plugin nesta conversa. Rust apresentou o menor total de memória privada, 61,48 MiB, incluindo túnel e auxiliares. A implementação Node existente e o plugin instalado foram preservados; o servidor original foi restaurado e respondeu pelo plugin ao final. Não houve migração do aplicativo.
 
 ## Compatibilidade e manutenção

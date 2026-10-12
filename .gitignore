@@ -20,3 +20,6 @@ bench/probes/**/target/
 *.exe
 *.dll
 *.pdb
+/target/
+/local/
+/test/local-results*.json
