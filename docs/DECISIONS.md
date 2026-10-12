@@ -1,5 +1,20 @@
 # Decisões desta etapa
 
+## Núcleo persistente
+
+- Implementar biblioteca interna Rust e schema SQLite 1, sem expor CRUD por MCP nesta entrega. Manter versão 0.2.0 e contrato de recallly_status; Node permanece intacto como fallback de diagnóstico.
+- Produção em LOCALAPPDATA/Recallly/reminders.sqlite3; RECALLLY_DB_PATH absoluto apenas para desenvolvimento e testes. Nunca usar o diretório atual como fallback. Testes sempre em diretórios temporários.
+- rusqlite 0.40.2 bundled, chrono-tz 0.10.4, thiserror 2.0.21 e tempfile 3.23.0 para testes, versões diretas fixas e lockfile. Preservar a versão thiserror já usada transitivamente pelo SDK. Usar compilador C portátil existente; ativar rustfmt e Clippy do pacote Rust já disponível, sem instalar serviços.
+- WAL, synchronous FULL, foreign_keys ON e busy_timeout de cinco segundos. Migration transacional com user_version, application_id e conferência do schema embarcado. Banco incompatível/corrompido falha antes de MCP.
+- File::try_lock exclusivo em arquivo lateral por banco, sem PID, mantido no disco e ignorado pelo Git. O sistema libera a trava após EOF, saída normal ou término forçado. Preservar o arquivo lateral evita corridas de exclusão. Hard links e alteração externa durante uso não são suportados.
+- BEGIN IMMEDIATE mantém a reivindicação atômica mesmo sem a trava de instância. Revision impede atualização silenciosa e conclusão por tentativa antiga. Reivindicar é o início da tentativa; os demais passos não incrementam attempt_count.
+- Idempotência compara conteúdo original imutável e devolve o registro atual quando a criação se repete. Cancelar claimed é rejeitado para evitar corrida com a tentativa futura; pending/failed podem ser cancelados. Estados terminais e regras completas em STORAGE.md.
+- Recuperar na inicialização reivindicações com timeout atingido, padrão 900 segundos configurável. Não criar timer ou polling. Não prometer entrega exatamente uma vez em uma futura integração SMTP.
+- Preservar túnel, plugin, perfil e executável ativo; construir a persistência em saída separada. A conexão real Rust 0.2.0 já foi comprovada pelo chat; não pedir nova ação manual para um contrato inalterado.
+- Pendentes: CRUD MCP restrito, política de autorização, envio e ambiguidade de entrega, agendador, backup/restauração, criptografia, autostart e distribuição. Nenhuma credencial de e-mail foi solicitada ou usada.
+
+## Histórico da prova inicial
+
 - Node.js ESM e SDK MCP: runtime disponível, sem compilador e com cliente compatível para validar o protocolo. Escolha restrita à prova; tecnologia definitiva pendente.
 - Transporte stdio: nenhum listener HTTP, porta, regra de firewall ou acesso público. Secure MCP Tunnel é o caminho oficial documentado para posterior teste privado.
 - Única ferramenta `recallly_status`, schema estrito e metadados de somente leitura. Sem e-mails, alterações de arquivos ou comandos do sistema no handler.

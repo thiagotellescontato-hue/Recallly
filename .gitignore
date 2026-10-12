@@ -23,3 +23,12 @@ bench/probes/**/target/
 /target/
 /local/
 /test/local-results*.json
+*.sqlite
+*.sqlite3
+*.db
+*-wal
+*-shm
+*-journal
+*.sqlite3.lock
+*.sqlite.lock
+*.db.lock

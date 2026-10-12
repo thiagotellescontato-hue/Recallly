@@ -2,7 +2,7 @@
 
 ## Prova principal Rust 0.2.0
 
-Execute a partir da raiz do checkout no Windows x64. A aplicação usa somente stdio e expõe recallly_status, sem banco, rede, arquivos ou telemetria. O processo espera um cliente MCP; silêncio no terminal é normal. Node 0.1.0 continua em src/server.mjs para reversão.
+Execute a partir da raiz do checkout no Windows x64. A aplicação usa stdio e expõe somente recallly_status; sua inicialização agora abre o armazenamento local descrito em STORAGE.md. Não há listener MCP, acesso de rede ou telemetria no aplicativo. O processo espera um cliente MCP; silêncio no terminal é normal. Node 0.1.0 continua em src/server.mjs como fallback de diagnóstico, sem persistência.
 
 Rust 1.99.0 e dependências diretas fixas estão em rust-toolchain.toml e Cargo.toml. Cargo.lock fixa também as dependências transitivas. Não é necessária chave OpenAI para compilar ou testar localmente. Nesta máquina, as ferramentas portáteis já preparadas ficam fora do checkout. Configure somente esta sessão PowerShell:
 
@@ -10,24 +10,29 @@ Rust 1.99.0 e dependências diretas fixas estão em rust-toolchain.toml e Cargo.
 $tools = [IO.Path]::GetFullPath((Join-Path (Get-Location) '../architecture-work'))
 $env:PATH = "$tools/msys2/mingw64/bin;$tools/rust/bin;$tools/rust/lib/rustlib/x86_64-pc-windows-gnu/bin/self-contained;$env:PATH"
 $env:CARGO_HOME = Join-Path $tools 'cargo-cache'
-$env:CARGO_TARGET_DIR = Join-Path $tools 'rust-probe-target'
+$env:CARGO_TARGET_DIR = Join-Path $tools 'persistent-core-target'
 $env:RUSTFLAGS = '-C link-self-contained=yes'
+$env:CC = Join-Path $tools 'llvm-mingw-20261006-ucrt-x86_64/bin/x86_64-w64-mingw32-clang.exe'
+$env:AR = Join-Path $tools 'llvm-mingw-20261006-ucrt-x86_64/bin/llvm-ar.exe'
 ```
 
-Não misture esse target GNU com o wrapper GCC LLVM-MinGW. Em outra máquina, prepare Rust 1.99.0 GNU x64 e GNU binutils compatível; ajuste os diretórios da sessão. Não é necessário alterar PATH global, política de execução ou instalar a aplicação como administrador.
+O linker Rust permanece GNU; CC/AR apontam explicitamente para Clang/llvm-ar somente na compilação do SQLite bundled. Em outra máquina, prepare Rust 1.99.0 GNU x64 com rustfmt/Clippy, GNU binutils e compilador C compatíveis; ajuste os diretórios da sessão. Não é necessário alterar PATH global, política de execução ou instalar a aplicação como administrador. A saída separada preserva o executável do túnel ativo.
 
 Compilar e testar:
 
 ```powershell
+cargo fmt --all -- --check
+cargo clippy --all-targets --locked -- -D warnings
 cargo test --locked
 cargo build --release --locked
+cargo build --release --locked --offline
 pnpm install --frozen-lockfile
 pnpm check
 pnpm test
 pnpm test:rust
 ```
 
-Cargo test cobre conversão de fusos; pnpm test mantém o teste do fallback Node; pnpm test:rust inicia a aplicação release e cobre o protocolo, contrato, erros, recuperação, identidade por execução, stderr e EOF. Node e pnpm são ferramentas de teste e operação, não dependências do executável Rust em execução. Use os binários já configurados nesta máquina se eles não estiverem no PATH do terminal externo.
+Cargo test cobre fusos, domínio, SQLite, migrations, concorrência e processos reais; pnpm test mantém o teste do fallback Node; pnpm test:rust inicia a aplicação release com banco temporário próprio e cobre protocolo, contrato, erros, recuperação, identidade por execução, stderr e EOF. Nenhum teste usa o banco de produção. Node e pnpm são ferramentas de teste e operação, não dependências do executável Rust em execução. Use os binários já configurados nesta máquina se eles não estiverem no PATH do terminal externo.
 
 pnpm start é um atalho de desenvolvimento para cargo run --release --locked; pnpm start:node executa o fallback. No túnel use o executável Rust diretamente, sem Cargo, pnpm ou compilação na inicialização.
 
@@ -71,4 +76,4 @@ Esse comando valida src/server.mjs, encerra a árvore configurada e inicia o tú
 
 Após o túnel Rust ficar pronto, selecione o plugin Recallly Probe já instalado e envie: `Use Recallly Probe e chame recallly_status sem argumentos. Confirme a versão 0.2.0. Não use o terminal para simular a chamada.`
 
-Uma resposta local ou readiness não comprova essa chamada. A prova comparativa Rust 0.1.0 respondeu pelo plugin anteriormente; isso não valida automaticamente a aplicação principal 0.2.0. A validação remota desta versão permanece pendente até uma chamada real. O computador, a rede, a chave e o daemon precisam continuar disponíveis; não há inicialização automática.
+Uma resposta local ou readiness não comprova essa chamada. A chamada real Rust 0.2.0 foi comprovada neste chat em 12/10/2026. Na etapa de persistência, o túnel e seu artefato ativo são preservados; o build novo é validado separadamente. Não é necessária nova ação manual pelo ChatGPT para o contrato inalterado. A configuração local do iniciador ainda aponta para o artefato ativo original; a substituição operacional pelo novo build deve ser feita em uma troca controlada posterior, preservando perfil e plugin. O computador, a rede, a chave e o daemon precisam continuar disponíveis; não há inicialização automática.

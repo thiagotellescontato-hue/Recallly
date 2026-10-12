@@ -1,5 +1,31 @@
 # Validação realizada
 
+## Núcleo persistente Rust
+
+Antes das alterações: checkout limpo em main no commit f8601e044c1f3f797dbb36d5f93f8af3cd7f2ee3, origin oficial conferido e nenhum AGENTS.md aplicável. cargo test --locked, build release, pnpm check, pnpm test e pnpm test:rust passaram. Os testes de subprocessos precisaram executar fora do sandbox por spawn EPERM; não houve mudança na política de execução do Windows.
+
+Chamada real pelo plugin no início desta etapa retornou Recallly online, versão 0.2.0, UTC 2026-10-12T23:24:45.964Z e America/Sao_Paulo. Não se registra UUID, caminho ou credencial. O túnel e seu executável ativo foram preservados; o novo núcleo usa saída de build separada e bancos descartáveis. A chamada pelo plugin valida o artefato já ativo; a validação do núcleo persistente novo é local, sem alegação de troca operacional.
+
+Rustfmt e Clippy foram ativados do pacote portátil Rust 1.99.0 já disponível. SQLite bundled compilou com o Clang/llvm-ar existentes, mantendo o linker GNU do Rust. Nenhuma instalação global, credencial, porta ou serviço adicional foi necessária.
+
+Testes Rust: 18 testes passaram (três da biblioteca, dois de fuso, onze do armazenamento e dois de processos), cobrindo os 29 cenários solicitados em grupos. Incluem migration inicial, reabertura, versão futura/estrangeira/corrupção/schema inválido, rollback de DDL e versão, pragmas, constraints e índice, validações, idempotência original após edição/cancelamento, buscas, filtros/ordenação, revisão divergente, estados inválidos, vencimento exato, tentativas, conclusão, falhas temporária/definitiva e recuperação com relógio injetado. Oito conexões concorrentes, deliberadamente sem a trava do aplicativo, produziram uma única reivindicação e uma única tentativa.
+
+Processos reais com banco temporário: primeira instância respondeu initialize e status; segunda falhou com mensagem genérica de instância ocupada e sem anunciar MCP; EOF encerrou a primeira com código zero; nova instância iniciou e preservou o conteúdo; término forçado liberou a trava para outra instância. Uma reivindicação antiga foi recuperada na inicialização, mantendo contador e invalidando a revisão anterior. Banco corrompido falhou antes de availability, sem expor caminho. Resposta de status manteve exatamente seis campos e não revelou o conteúdo sentinela do banco.
+
+Todos os testes de armazenamento recebem caminho em TempDir; o cliente MCP cria e remove seu próprio diretório temporário, sobrescrevendo RECALLLY_DB_PATH apenas no filho de teste. Nenhum teste usa o banco de produção. O fallback src/server.mjs e test/probe.mjs não foram alterados. Alterações em probe.rs e timezone.rs são somente formatação Rust.
+
+Revisão adicional confirmou rejeição de índice removido e de tabelas estrangeiras com nome parecido com o prefixo interno SQLite, preservação do erro definitivo após cancelamento e impossibilidade de reivindicar um cancelado mesmo depois de seu vencimento. Rustfmt, Clippy --all-targets --locked -- -D warnings e os 18 testes passaram após essa revisão. thiserror 2.0.21 foi preservado em relação ao SDK anterior, sem downgrade.
+
+pnpm check e pnpm test passaram; a resposta Node foi suprimida na execução para não registrar UUID. A busca nos arquivos versionados não encontrou padrões de credenciais/chaves privadas, e-mails, caminhos pessoais ou UUIDs; nenhum banco, WAL/SHM, executável, target, log ou arquivo local está versionado. O exemplo histórico de UUID foi omitido. Conferência do caminho padrão confirmou que o banco de produção não existe; todos os testes usaram caminhos descartáveis explícitos.
+
+No encerramento da revisão, healthz e readyz HTTP 200, um servidor original ativo e nenhum servidor novo de teste remanescente. Nova chamada real pelo plugin retornou online, versão 0.2.0, UTC 2026-10-12T23:53:09.931Z e America/Sao_Paulo. Nenhuma nova etapa manual de ChatGPT foi necessária. Perfil, configuração local do iniciador e plugin permaneceram sem alteração.
+
+Build release --locked e rebuild release --locked --offline passaram. O rebuild offline recompilou o código final revisado usando somente o cache existente; não se alega reprodutibilidade entre máquinas ou builds limpos. Artefato final de 2.180.608 bytes, SHA-256 423d2c9308d082f7e1d4a9a4332ef0fa281b5fc1c79df81107e91a7f7a1974ba, fora do Git e separado do executável do túnel. pnpm test:rust passou contra esse release final com banco temporário, incluindo contrato completo, argumentos inválidos, ferramenta desconhecida, recuperação, renovação da identidade, stderr vazio e EOF com saída normal.
+
+Não houve envio, SMTP, senha de aplicativo, scheduler, autostart, interface, interpretação de linguagem natural ou nova ferramenta MCP. Não há benchmark de memória deste núcleo nem teste de falha física de energia; backup, criptografia e ambiguidade de entrega futura permanecem pendentes.
+
+As seções seguintes preservam o histórico anterior; estados de validação pendente e ausência de armazenamento referem-se àquelas etapas.
+
 ## Migração principal Rust 0.2.0 em 12/10/2026
 
 Baseline antes de editar: pnpm install --frozen-lockfile, pnpm check e pnpm test passaram com Node 0.1.0. A chamada pelo plugin também confirmou Node 0.1.0 antes da interrupção. Na retomada, nenhum tunnel-client estava ativo, não havia health disponível nem CONTROL_PLANE_API_KEY no ambiente do agente. Não se tentou recuperar segredo do processo ou do usuário. O perfil Node externo foi preservado.
@@ -54,7 +80,7 @@ Resultado real da chamada local:
   "version": "0.1.0",
   "current_time": "2026-10-07T23:20:09.251Z",
   "timezone": "America/Sao_Paulo",
-  "machine_id": "cdc6c622-a406-4075-b9de-2e6fe595b46b"
+  "machine_id": "<omitido>"
 }
 ```
 

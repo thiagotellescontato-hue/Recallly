@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { spawn, execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createInterface } from 'node:readline';
@@ -11,6 +12,8 @@ import { CallToolResultSchema } from '@modelcontextprotocol/sdk/types.js';
 
 const executable = resolve(process.env.RECALLLY_PROBE_EXE ?? join(process.env.CARGO_TARGET_DIR ?? 'target', 'release/recallly-probe.exe'));
 const env = Object.fromEntries(Object.entries(process.env).filter(([name]) => !/KEY|TOKEN|SECRET|PASSWORD|CERT/i.test(name)));
+const temporaryDirectory = await mkdtemp(join(tmpdir(), 'recallly-mcp-test-'));
+env.RECALLLY_DB_PATH = join(temporaryDirectory, 'reminders.sqlite3');
 const fields = ['current_time', 'machine_id', 'service', 'status', 'timezone', 'version'];
 const expectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 let stage = 'initialize';
@@ -125,4 +128,6 @@ try {
 } catch {
   process.stderr.write(`Rust validation failed at: ${stage}.\n`);
   process.exitCode = 1;
+} finally {
+  await rm(temporaryDirectory, { recursive: true, force: true });
 }

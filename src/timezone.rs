@@ -19,7 +19,11 @@ pub fn detected_timezone() -> Result<String, ()> {
         return Err(());
     }
     let zone = unsafe { zone.assume_init() };
-    let length = zone.TimeZoneKeyName.iter().position(|value| *value == 0).ok_or(())?;
+    let length = zone
+        .TimeZoneKeyName
+        .iter()
+        .position(|value| *value == 0)
+        .ok_or(())?;
     let key = String::from_utf16(&zone.TimeZoneKeyName[..length]).map_err(|_| ())?;
     windows_to_iana(&key)
 }

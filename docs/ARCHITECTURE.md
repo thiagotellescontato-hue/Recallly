@@ -1,4 +1,14 @@
-# Comparação de arquitetura
+# Arquitetura do Recallly
+
+## Núcleo persistente atual
+
+A aplicação Rust inclui agora a biblioteca interna src/storage e SQLite embarcado por rusqlite 0.40.2, com schema 1 em migrations/001_reminders.sql. A inicialização abre e migra o banco antes do transporte MCP. Há tipos de domínio, Clock injetável, idempotência baseada na criação original, revisão otimista, transações IMMEDIATE e recuperação de reivindicações abandonadas. A trava exclusiva por banco usa File::try_lock da biblioteca padrão, já disponível no Rust fixado, evitando um binding adicional de mutex Windows. Ela é liberada pelo sistema ao terminar o processo.
+
+O handler recallly_status preserva versão 0.2.0 e os seis campos, sem acesso ao conteúdo do banco. A chamada real Rust 0.2.0 foi comprovada pelo plugin antes desta etapa e conferida novamente no início. O túnel e seu artefato ativo foram preservados; o novo build com armazenamento é testado separadamente. A prova Node permanece intacta. Os números históricos de consumo não incluem SQLite e não são projetados para este build.
+
+Detalhes, limites e transições em [STORAGE](STORAGE.md). Não foram implementados agendador, SMTP, envio, credenciais, ferramentas MCP de lembretes, autostart ou interface gráfica. Próximo passo proposto: expor operações restritas de lembretes pelo MCP em etapa autorizada separada, antes de qualquer envio ou agendador.
+
+As seções seguintes preservam as decisões e medições anteriores à persistência; afirmações de ausência de banco e validação pendente descrevem aqueles momentos.
 
 ## Implementação principal após a migração
 

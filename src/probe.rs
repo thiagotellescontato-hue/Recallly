@@ -1,7 +1,4 @@
-use rmcp::{
-    ErrorData as McpError, RoleServer, ServerHandler,
-    model::*, service::RequestContext,
-};
+use rmcp::{ErrorData as McpError, RoleServer, ServerHandler, model::*, service::RequestContext};
 use serde_json::json;
 use std::time::SystemTime;
 
@@ -24,7 +21,11 @@ impl Probe {
             "annotations":{"readOnlyHint":true,"idempotentHint":true,"destructiveHint":false,"openWorldHint":false},
             "_meta":{"securitySchemes":[{"type":"noauth"}]}
         }))?;
-        Ok(Self { machine: uuid::Uuid::new_v4().to_string(), timezone, tool })
+        Ok(Self {
+            machine: uuid::Uuid::new_v4().to_string(),
+            timezone,
+            tool,
+        })
     }
 }
 
@@ -35,13 +36,32 @@ impl ServerHandler for Probe {
         config
     }
 
-    async fn list_tools(&self, _: Option<PaginatedRequestParams>, _: RequestContext<RoleServer>) -> Result<ListToolsResult, McpError> {
-        Ok(ListToolsResult { tools: vec![self.tool.clone()], ..Default::default() })
+    async fn list_tools(
+        &self,
+        _: Option<PaginatedRequestParams>,
+        _: RequestContext<RoleServer>,
+    ) -> Result<ListToolsResult, McpError> {
+        Ok(ListToolsResult {
+            tools: vec![self.tool.clone()],
+            ..Default::default()
+        })
     }
 
-    async fn call_tool(&self, request: CallToolRequestParams, _: RequestContext<RoleServer>) -> Result<CallToolResponse, McpError> {
-        if request.name != "recallly_status" || request.arguments.as_ref().is_some_and(|args| !args.is_empty()) {
-            return Ok(CallToolResult::error(vec![ContentBlock::text("Invalid tool or arguments")]).into());
+    async fn call_tool(
+        &self,
+        request: CallToolRequestParams,
+        _: RequestContext<RoleServer>,
+    ) -> Result<CallToolResponse, McpError> {
+        if request.name != "recallly_status"
+            || request
+                .arguments
+                .as_ref()
+                .is_some_and(|args| !args.is_empty())
+        {
+            return Ok(CallToolResult::error(vec![ContentBlock::text(
+                "Invalid tool or arguments",
+            )])
+            .into());
         }
         let now: chrono::DateTime<chrono::Utc> = SystemTime::now().into();
         let value = json!({
