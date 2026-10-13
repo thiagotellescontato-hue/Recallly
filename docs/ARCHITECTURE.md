@@ -4,9 +4,9 @@
 
 A aplicação Rust inclui agora a biblioteca interna src/storage e SQLite embarcado por rusqlite 0.40.2, com schema 1 em migrations/001_reminders.sql. A inicialização abre e migra o banco antes do transporte MCP. Há tipos de domínio, Clock injetável, idempotência baseada na criação original, revisão otimista, transações IMMEDIATE e recuperação de reivindicações abandonadas. A trava exclusiva por banco usa File::try_lock da biblioteca padrão, já disponível no Rust fixado, evitando um binding adicional de mutex Windows. Ela é liberada pelo sistema ao terminar o processo.
 
-O handler recallly_status preserva versão 0.2.0 e os seis campos, sem acesso ao conteúdo do banco. A chamada real Rust 0.2.0 foi comprovada pelo plugin antes desta etapa e conferida novamente no início. O túnel e seu artefato ativo foram preservados; o novo build com armazenamento é testado separadamente. A prova Node permanece intacta. Os números históricos de consumo não incluem SQLite e não são projetados para este build.
+Na versão 0.3.0, o handler possui a única instância de Store durante toda a sessão MCP, protegida por Mutex. Isso mantém a conexão SQLite e a trava exclusiva abertas sem criar conexão por chamada. `recallly_status` preserva os seis campos anônimos; criar, listar, alterar e cancelar usam exclusivamente a API interna do armazenamento. A prova Node permanece intacta.
 
-Detalhes, limites e transições em [STORAGE](STORAGE.md). Não foram implementados agendador, SMTP, envio, credenciais, ferramentas MCP de lembretes, autostart ou interface gráfica. Próximo passo proposto: expor operações restritas de lembretes pelo MCP em etapa autorizada separada, antes de qualquer envio ou agendador.
+Detalhes, limites e transições em [STORAGE](STORAGE.md), e contratos públicos em [MCP-TOOLS](MCP-TOOLS.md). Não foram implementados agendador, SMTP, envio, credenciais, autostart ou interface gráfica. O túnel e o plugin não foram configurados neste computador; a validação 0.3.0 é local e não constitui ativação pelo ChatGPT.
 
 As seções seguintes preservam as decisões e medições anteriores à persistência; afirmações de ausência de banco e validação pendente descrevem aqueles momentos.
 
@@ -20,7 +20,7 @@ Fontes primárias: [API Windows](https://learn.microsoft.com/en-us/windows/win32
 
 Consumo privado local mediano: servidor 0,71 MiB, auxiliar 6,25 MiB, total 6,96 MiB; sem regressão grosseira em relação à prova Rust anterior. Não se reaplica automaticamente o total combinado de 61,48 MiB à nova versão. Build, testes e limites estão em VALIDATION.md; comandos e reversão em PROBE-SETUP.md.
 
-No produto futuro, servidor local permanentemente disponível manterá dados e executará os lembretes; ChatGPT será a interface principal por ferramentas MCP restritas de criação, consulta, alteração e cancelamento. Nenhuma dessas ferramentas ou persistência foi implementada. Após a validação real 0.2.0 pelo chat, o próximo passo será começar o núcleo persistente de lembretes, em uma etapa separada.
+O servidor local já mantém dados e oferece ferramentas MCP restritas de criação, consulta, alteração e cancelamento. A próxima capacidade de produto será um executor de fila e envio, mas ela exige uma etapa separada para política de retries, ambiguidade SMTP, proteção de credenciais e operação contínua. Persistir um registro não afirma que ele foi enviado.
 
 ## Histórico da decisão
 

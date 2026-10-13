@@ -1,11 +1,11 @@
 # Recallly
 
-Aplicativo local de lembretes em Rust, com ChatGPT como futura interface de operação via MCP.
+Aplicativo local de lembretes em Rust, com ChatGPT como interface planejada via MCP.
 
-Estado atual: núcleo persistente em Rust com SQLite embutido, schema 1, idempotência, revisões, transições de estado, recuperação no reinício e proteção por banco contra duas instâncias. A API de lembretes é interna e testável; ainda não está exposta ao ChatGPT. Consulte [STORAGE](docs/STORAGE.md).
+Estado atual: versão 0.3.0, núcleo persistente SQLite schema 1 e ferramentas MCP para criar, listar, alterar e cancelar lembretes. A mesma instância de armazenamento atende toda a sessão, com idempotência, revisão otimista, transições de estado, recuperação no reinício e trava exclusiva por banco. Consulte [ferramentas MCP](docs/MCP-TOOLS.md) e [armazenamento](docs/STORAGE.md).
 
-Única ferramenta MCP: `recallly_status`, versão 0.2.0, com os mesmos seis campos anônimos, sem dados do banco. A conexão real Rust 0.2.0 pelo plugin foi comprovada neste chat. O túnel ativo, seu executável e seu perfil foram preservados; o novo build com persistência é validado separadamente com bancos descartáveis. Node 0.1.0 permanece intacto como fallback de diagnóstico, sem persistência.
+Ferramentas disponíveis: `recallly_status`, `recallly_create_reminder`, `recallly_list_reminders`, `recallly_update_reminder` e `recallly_cancel_reminder`. O destinatário autorizado é fixo, o fuso dos lembretes é `America/Sao_Paulo` e entradas desconhecidas são rejeitadas. Persistência não significa envio.
 
-Não há agendador, envio de e-mails, SMTP, credenciais de e-mail, autostart, ferramentas MCP de lembretes, interface gráfica ou interpretação de linguagem natural. Os números de memória anteriores pertencem às provas sem armazenamento e não representam este núcleo.
+Não há scheduler, SMTP, envio de e-mails, credenciais de e-mail, autostart, interface gráfica ou interpretação de linguagem natural. Node 0.1.0 permanece como fallback de diagnóstico. A versão 0.3.0 foi validada localmente com bancos temporários, mas ainda não foi ativada por túnel ou validada pelo ChatGPT.
 
-Comece por [PROBE-SETUP](docs/PROBE-SETUP.md). Consulte [ambiente](docs/ENVIRONMENT.md), [viabilidade](docs/MCP-FEASIBILITY.md), [decisões](docs/DECISIONS.md) e [validação](docs/VALIDATION.md).
+Comece por [PROBE-SETUP](docs/PROBE-SETUP.md). Consulte também [arquitetura](docs/ARCHITECTURE.md), [ambiente](docs/ENVIRONMENT.md), [viabilidade](docs/MCP-FEASIBILITY.md), [decisões](docs/DECISIONS.md) e [validação](docs/VALIDATION.md).

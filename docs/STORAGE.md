@@ -64,6 +64,14 @@ foreign_keys ON, busy_timeout 5 segundos, WAL e synchronous FULL privilegiam int
 
 Fontes primárias: [rusqlite](https://docs.rs/rusqlite/0.40.2/rusqlite/), [SQLite WAL](https://www.sqlite.org/wal.html), [pragmas SQLite](https://www.sqlite.org/pragma.html), [File::try_lock](https://doc.rust-lang.org/std/fs/struct.File.html#method.try_lock) e [chrono-tz](https://docs.rs/chrono-tz/0.10.4/chrono_tz/).
 
+## Exposição MCP 0.3.0
+
+O `Store` pertence ao handler MCP e fica protegido por `Mutex`; há uma única conexão e uma única trava por processo. As ferramentas não abrem conexões independentes. Operações síncronas terminam antes de o handler devolver a resposta e não mantêm a trava através de um ponto de espera assíncrono.
+
+Criação usa `Store::create`, listagem usa `Store::list`, alteração lê o registro atual e chama `Store::update` com conteúdo completo, e cancelamento usa `Store::cancel`. O schema 1 já comporta todas essas operações e não recebeu migration. Contratos e erros públicos estão em [MCP-TOOLS](MCP-TOOLS.md).
+
+O destinatário é constante fora do registro e aparece uma vez na listagem. Persistência confirma somente o commit SQLite. `claimed` indica tentativa reivindicada e `sent` é terminal; nenhuma ferramenta 0.3.0 executa a fila ou envia e-mail.
+
 ## Validação e execução
 
 ```powershell
@@ -77,6 +85,6 @@ pnpm test
 pnpm test:rust
 ```
 
-Configure o compilador conforme PROBE-SETUP antes dos comandos. Os testes de processo fazem initialize/status, concorrência de instâncias, EOF, término forçado, recuperação e reabertura com conteúdo persistido. Não iniciam o banco de produção, não usam chaves e não mexem no túnel. O contrato MCP mantém versão 0.2.0 e seis campos; o handler de status não lê nem escreve o banco, embora a inicialização do novo servidor abra o armazenamento.
+Configure o compilador conforme PROBE-SETUP antes dos comandos. Os testes de processo fazem initialize/status, concorrência de instâncias, EOF, término forçado, recuperação e reabertura com conteúdo persistido. O teste MCP 0.3.0 executa criar, listar, alterar, listar, cancelar, listar e reabrir o processo. Não iniciam o banco de produção, não usam chaves e não mexem no túnel. `recallly_status` mantém os mesmos seis campos; a inicialização abre o armazenamento antes de anunciar disponibilidade.
 
 O executável antigo do túnel em execução foi preservado. O novo núcleo é compilado em saída separada; ativá-lo operacionalmente será uma troca posterior controlada do artefato. Node continua apenas como fallback de diagnóstico e não substitui o armazenamento Rust.

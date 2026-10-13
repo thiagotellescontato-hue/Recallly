@@ -27,13 +27,12 @@ async fn run() -> Result<(), String> {
     })()
     .map_err(|error| error.to_string())?;
     let failure = || "Recallly Probe could not initialize or complete the MCP session.".to_owned();
-    let probe = probe::Probe::new(timezone::detected_timezone().map_err(|_| failure())?)
+    let probe = probe::Probe::new(timezone::detected_timezone().map_err(|_| failure())?, store)
         .map_err(|_| failure())?;
     let service = probe
         .serve(rmcp::transport::stdio())
         .await
         .map_err(|_| failure())?;
     service.waiting().await.map_err(|_| failure())?;
-    drop(store);
     Ok(())
 }

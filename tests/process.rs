@@ -62,8 +62,8 @@ impl Process {
         .unwrap()
     }
     fn initialize(&mut self) {
-        self.send(json!({"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"Recallly process test","version":"0.2.0"}}}));
-        assert_eq!(self.reply()["result"]["serverInfo"]["version"], "0.2.0");
+        self.send(json!({"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"Recallly process test","version":"0.3.0"}}}));
+        assert_eq!(self.reply()["result"]["serverInfo"]["version"], "0.3.0");
         self.send(json!({"jsonrpc":"2.0","method":"notifications/initialized"}));
     }
     fn status(&mut self) {
@@ -83,7 +83,7 @@ impl Process {
         }
         assert_eq!(result["service"], "Recallly");
         assert_eq!(result["status"], "online");
-        assert_eq!(result["version"], "0.2.0");
+        assert_eq!(result["version"], "0.3.0");
         assert!(!reply.to_string().contains("PRIVATE_REMINDER_SENTINEL"));
         assert!(!reply.to_string().contains("sqlite3"));
     }

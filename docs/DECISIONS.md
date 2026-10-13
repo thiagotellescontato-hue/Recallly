@@ -1,5 +1,17 @@
 # Decisões desta etapa
 
+## Ferramentas MCP 0.3.0
+
+- Expor criar, listar, alterar e cancelar usando somente o Store existente e sem alterar o schema 1. O handler possui a única instância do armazenamento, protegida por Mutex, mantendo conexão e trava exclusivas durante toda a sessão.
+- Fixar internamente `America/Sao_Paulo` e `thiagotelles.contato@gmail.com`; não aceitar timezone, remetente ou destinatário nas entradas.
+- Retornar somente `idempotent_replay` na criação. Um campo `created` seria redundante e inverso. A confirmação significa commit SQLite, não envio.
+- Listar no máximo 1.000 registros, com padrão 50, ordenação fixa por horário UTC e ID, filtros apenas pelo enum de estados e sem paginação até existir cursor seguro.
+- Tratar atualização sem mudança efetiva como `invalid_input`, sem incrementar revisão. Revisão divergente tem precedência sobre a comparação de conteúdo; somente `pending` é editável.
+- Manter as transições do núcleo no cancelamento. Repetição com revisão antiga produz conflito de revisão; repetição com a revisão atual de um registro já cancelado produz estado incompatível.
+- Expor erros nas categorias estáveis `invalid_input`, `not_found`, `idempotency_conflict`, `revision_conflict`, `incompatible_state` e `internal_error`, sem detalhes de SQLite, caminhos ou stack trace.
+- Preservar o runtime Tokio current-thread e o transporte stdio. Não adicionar HTTP, scheduler, SMTP, credenciais, autostart ou ativação de túnel.
+- Validar localmente no target MSVC disponível. A equivalência de distribuição com o artefato GNU anterior permanece pendente e não é inferida dos testes MSVC.
+
 ## Núcleo persistente
 
 - Implementar biblioteca interna Rust e schema SQLite 1, sem expor CRUD por MCP nesta entrega. Manter versão 0.2.0 e contrato de recallly_status; Node permanece intacto como fallback de diagnóstico.

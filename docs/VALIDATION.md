@@ -1,5 +1,32 @@
 # Validação realizada
 
+## Ferramentas MCP Rust 0.3.0
+
+Baseline: `main` e `origin/main` em `e9fa0be061c96fb6534dddbf4995ccceebce9251`, árvore limpa e remoto oficial conferido antes das alterações. O schema permaneceu na versão 1. Nenhum túnel, plugin, credencial, banco de produção ou envio de e-mail foi acessado.
+
+O handler passou a possuir a única instância de Store, protegida por Mutex. Foram expostas `recallly_create_reminder`, `recallly_list_reminders`, `recallly_update_reminder` e `recallly_cancel_reminder`; `recallly_status` preservou os seis campos e passou a informar a versão 0.3.0. Schemas rejeitam propriedades desconhecidas e não aceitam destinatário, remetente ou timezone livre.
+
+Os 25 testes Rust passaram: três do módulo de armazenamento, nove do binário incluindo sete testes do handler e dois de fuso, dois testes de processos e onze testes de integração do armazenamento. A cobertura nova inclui persistência, RFC 3339 com offset, conversão para São Paulo, limites em bytes, NUL/CR/LF, idempotência, todos os filtros de estado, ordenação, limites de listagem, atualizações parciais e múltiplas, no-op, revisão otimista, concorrência de revisões, estados de cancelamento, reinício e mensagens de erro sem detalhes internos.
+
+O teste MCP real local iniciou o release 0.3.0 por stdio com banco temporário próprio. Conferiu as cinco ferramentas e schemas, executou criar, replay idempotente, listar, alterar, listar, cancelar, listar novamente e replay após cancelamento. Depois encerrou e reabriu o servidor sobre o mesmo banco temporário para confirmar persistência; ao final removeu o diretório. Também validou argumentos desconhecidos, tentativa de informar destinatário, erros categorizados, recuperação após erros, identidade por execução, stderr vazio e EOF normal. O teste Node 0.1.0 de fallback continuou passando.
+
+Comandos finais, todos com exit code zero:
+
+```text
+cargo fmt --all -- --check
+cargo clippy --all-targets --locked -- -D warnings
+cargo test --locked
+cargo build --release --locked
+cargo build --release --locked --offline
+pnpm check
+pnpm test
+pnpm test:rust
+```
+
+O release Windows MSVC possui 3.352.064 bytes e SHA-256 `17028e3ce9eb2def76173ee262f84f06a75fb7009f9a1e38bff44e850d904895`. O rebuild offline utilizou somente o cache presente. Isso valida o artefato MSVC desta máquina; não afirma equivalência binária ou de distribuição com o build GNU anterior.
+
+Todos os bancos usados eram temporários. Nenhum banco, WAL, SHM ou lock de aplicação ficou no checkout, e nenhum processo Recallly permaneceu ativo após os testes. Ainda não há scheduler, SMTP, envio real, credenciais de e-mail, autostart ou validação 0.3.0 pelo Secure MCP Tunnel/ChatGPT.
+
 ## Núcleo persistente Rust
 
 Antes das alterações: checkout limpo em main no commit f8601e044c1f3f797dbb36d5f93f8af3cd7f2ee3, origin oficial conferido e nenhum AGENTS.md aplicável. cargo test --locked, build release, pnpm check, pnpm test e pnpm test:rust passaram. Os testes de subprocessos precisaram executar fora do sandbox por spawn EPERM; não houve mudança na política de execução do Windows.

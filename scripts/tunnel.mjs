@@ -70,7 +70,7 @@ try {
     await delay(500);
   }
   assert.ok(ready);
-  process.stdout.write(`Recallly ${mode === 'rust' ? 'Rust 0.2.0' : 'Node 0.1.0'}: health and readiness passed. Keep this window open. Chat validation is separate.\n`);
+  process.stdout.write(`Recallly ${mode === 'rust' ? 'Rust 0.3.0' : 'Node 0.1.0'}: health and readiness passed. Keep this window open. Chat validation is separate.\n`);
   stage = 'tunnel runtime';
   const exit = await exited;
   if (!interrupted) assert.equal(exit, 0);

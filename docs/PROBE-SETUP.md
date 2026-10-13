@@ -1,8 +1,8 @@
 # Executar Recallly Probe
 
-## Prova principal Rust 0.2.0
+## Aplicação principal Rust 0.3.0
 
-Execute a partir da raiz do checkout no Windows x64. A aplicação usa stdio e expõe somente recallly_status; sua inicialização agora abre o armazenamento local descrito em STORAGE.md. Não há listener MCP, acesso de rede ou telemetria no aplicativo. O processo espera um cliente MCP; silêncio no terminal é normal. Node 0.1.0 continua em src/server.mjs como fallback de diagnóstico, sem persistência.
+Execute a partir da raiz do checkout no Windows x64. A aplicação usa stdio e expõe `recallly_status` e quatro ferramentas persistentes descritas em MCP-TOOLS.md. Sua inicialização abre o armazenamento local descrito em STORAGE.md. Não há listener MCP, acesso de rede, SMTP ou telemetria no aplicativo. O processo espera um cliente MCP; silêncio no terminal é normal. Node 0.1.0 continua em src/server.mjs como fallback de diagnóstico, sem persistência.
 
 Rust 1.99.0 e dependências diretas fixas estão em rust-toolchain.toml e Cargo.toml. Cargo.lock fixa também as dependências transitivas. Não é necessária chave OpenAI para compilar ou testar localmente. Nesta máquina, as ferramentas portáteis já preparadas ficam fora do checkout. Configure somente esta sessão PowerShell:
 
@@ -31,6 +31,8 @@ pnpm check
 pnpm test
 pnpm test:rust
 ```
+
+`pnpm test:rust` define um banco temporário no processo filho e executa a sequência MCP criar, listar, alterar, listar, cancelar e listar, além de reabrir o servidor para verificar persistência. Nunca execute a validação sem `RECALLLY_DB_PATH` temporário; o script fornecido configura e remove esse caminho automaticamente.
 
 Cargo test cobre fusos, domínio, SQLite, migrations, concorrência e processos reais; pnpm test mantém o teste do fallback Node; pnpm test:rust inicia a aplicação release com banco temporário próprio e cobre protocolo, contrato, erros, recuperação, identidade por execução, stderr e EOF. Nenhum teste usa o banco de produção. Node e pnpm são ferramentas de teste e operação, não dependências do executável Rust em execução. Use os binários já configurados nesta máquina se eles não estiverem no PATH do terminal externo.
 
@@ -74,6 +76,6 @@ Esse comando valida src/server.mjs, encerra a árvore configurada e inicia o tú
 
 ## Validação pelo chat
 
-Após o túnel Rust ficar pronto, selecione o plugin Recallly Probe já instalado e envie: `Use Recallly Probe e chame recallly_status sem argumentos. Confirme a versão 0.2.0. Não use o terminal para simular a chamada.`
+Após uma configuração futura e controlada do túnel Rust, selecione o plugin Recallly Probe e envie: `Use Recallly Probe e chame recallly_status sem argumentos. Confirme a versão 0.3.0. Não use o terminal para simular a chamada.` Depois confirme a descoberta das quatro ferramentas de lembretes sem criar dados reais.
 
-Uma resposta local ou readiness não comprova essa chamada. A chamada real Rust 0.2.0 foi comprovada neste chat em 12/10/2026. Na etapa de persistência, o túnel e seu artefato ativo são preservados; o build novo é validado separadamente. Não é necessária nova ação manual pelo ChatGPT para o contrato inalterado. A configuração local do iniciador ainda aponta para o artefato ativo original; a substituição operacional pelo novo build deve ser feita em uma troca controlada posterior, preservando perfil e plugin. O computador, a rede, a chave e o daemon precisam continuar disponíveis; não há inicialização automática.
+Uma resposta local ou readiness não comprova essa chamada. A chamada real Rust 0.2.0 foi comprovada historicamente em 12/10/2026, mas não valida o novo contrato 0.3.0. A versão 0.3.0 deve ser ativada em troca controlada posterior, preservando perfil e plugin, e validada com banco descartável antes de qualquer dado real. O computador, a rede, a chave e o daemon precisam continuar disponíveis; não há inicialização automática.
